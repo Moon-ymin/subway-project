@@ -46,4 +46,6 @@ dependencies {
 
     // photoView
     implementation 'com.github.chrisbanes:PhotoView:2.3.0'
+    // toggleButton
+    implementation 'com.github.angads25:toggle:1.1.0'
 }
