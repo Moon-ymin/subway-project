@@ -7,13 +7,23 @@
         android:id="@+id/photo_view"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:scaleType="centerCrop" />
+        android:scaleType="centerCrop"
+        android:src="@drawable/busan_metro_kor"/>
 
-    <com.busanit.subway_project.SubwayMapView
-        android:id="@+id/subwayMapView"
+    <RelativeLayout
+        android:id="@+id/buttons_container"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:background="@android:color/transparent"/>
+        android:layout_height="match_parent">
+        <!-- 일단 버튼 하나만 놔둬보기 -->
+        <Button
+            android:id="@+id/station1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="100dp"
+            android:layout_marginTop="200dp"
+            android:text="Station 1" />
+
+    </RelativeLayout>
 
 
 </FrameLayout>
