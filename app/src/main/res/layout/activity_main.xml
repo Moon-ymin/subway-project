@@ -27,14 +27,7 @@
             android:layout_marginTop="?attr/actionBarSize"
             android:background="@color/white"
             android:scaleType="centerCrop"
-            android:src="@drawable/busan_metro_eng" />
-
-        <Button
-            android:id="@+id/station1"
-            android:layout_width="20dp"
-            android:layout_height="20dp"
-            android:layout_gravity="top|left"
-            android:text="1" />
+            android:src="@drawable/busan_metro_kor" />
 
 
     </RelativeLayout>
