@@ -1,37 +1,27 @@
 package com.busanit.subway_project
 
+import DBHelper
 import android.app.SearchManager
 import android.content.ContentValues
-import android.content.Context
-import android.database.Cursor
-import android.graphics.Matrix
-import android.graphics.RectF
 import android.os.Bundle
 import android.util.Log
-import android.util.TypedValue
 import android.view.Menu
 import android.view.MenuItem
-import android.widget.Button
-import android.widget.PopupMenu
-import android.widget.RelativeLayout
-import androidx.appcompat.widget.SearchView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.widget.SearchView
 import androidx.appcompat.widget.Toolbar
 import com.busanit.subway_project.databinding.ActivityMainBinding
-import com.busanit.subway_project.helper.DatabaseHelper
 import com.github.angads25.toggle.widget.LabeledSwitch
 import com.github.chrisbanes.photoview.PhotoView
 import org.jsoup.Jsoup
-import java.io.IOError
 import java.io.IOException
 
 class MainActivity : AppCompatActivity() {
 
     private lateinit var photoView: PhotoView
-    private lateinit var buttonsContainer: RelativeLayout
     private lateinit var binding: ActivityMainBinding
-    private lateinit var dbHelper: DatabaseHelper
+    private lateinit var dbHelper: DBHelper
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -39,36 +29,33 @@ class MainActivity : AppCompatActivity() {
         setContentView(binding.root)
 
         photoView = binding.photoView
-        buttonsContainer = binding.buttonsContainer
 
         val toolbar: Toolbar = findViewById(R.id.toolbar)
         setSupportActionBar(toolbar) // 툴바를 액션바로 설정
 
         // HTML 파일에서 데이터 읽기
-        dbHelper = DatabaseHelper(this)
+        dbHelper = DBHelper(this)
         parseHtmlAndInsertData()
 
-        // 예제: 클릭 이벤트 처리
+        // 클릭 이벤트 처리
         photoView.setOnPhotoTapListener { view, x, y ->
-            // x, y는 이미지의 상대적인 좌표 (0.0 ~ 1.0)
             val drawable = photoView.drawable
-            if (drawable != null ) {
-                val imageMatrix = Matrix(photoView.imageMatrix)
-                val imageRect = RectF(0f, 0f, drawable.intrinsicWidth.toFloat(), drawable.intrinsicHeight.toFloat())
-                imageMatrix.mapRect(imageRect)
+            if (drawable != null) {
+                val imageWidth = drawable.intrinsicWidth
+                val imageHeight = drawable.intrinsicHeight
 
-                // 변환된 좌표
-                val absoluteX = (imageRect.left + x * imageRect.width()).toInt()
-                val absoluteY = (imageRect.top + y * imageRect.height()).toInt()
+                // 상대 좌표를 절대 좌표로 변환
+                val absoluteX = (x * imageWidth).toInt()
+                val absoluteY = (y * imageHeight).toInt()
 
-                // 로그 출력
-                Log.d("PhotoView", "Relative coordinates: ($x, $y)")
-                Log.d("PhotoView", "Absolute coordinates: ($absoluteX, $absoluteY)")
+                // 변환된 절대 좌표 출력
+                Log.d("MainActivity", "Relative coordinates: ($x, $y)")
+                Log.d("MainActivity", "Absolute coordinates: ($absoluteX, $absoluteY)")
 
+                // 이후 처리 로직 구현
                 handleImageClick(absoluteX, absoluteY)
             }
         }
-
 
     }
 
@@ -86,7 +73,7 @@ class MainActivity : AppCompatActivity() {
         val toggleItem = menu.findItem(R.id.action_toggle)
         val labeledSwitch = toggleItem.actionView?.findViewById<LabeledSwitch>(R.id.lan_switch)
 
-        labeledSwitch?.setOnToggledListener { labeledSwitch, isOn ->
+        labeledSwitch?.setOnToggledListener { _, isOn ->
             // 토글 상태 변경 시 처리할 로직
             if (isOn) {
                 photoView.setImageResource(R.drawable.busan_metro_eng)
@@ -122,20 +109,21 @@ class MainActivity : AppCompatActivity() {
                 for (area in areas) {
                     val title = area.attr("title")
                     val coords = area.attr("coords").split(",")
-                    val x1 = coords[0].toInt()
-                    val y1 = coords[1].toInt()
-                    val x2 = coords[2].toInt()
-                    val y2 = coords[3].toInt()
+                    val x1 = coords[0].toFloat()
+                    val y1 = coords[1].toFloat()
+                    val x2 = coords[2].toFloat()
+                    val y2 = coords[3].toFloat()
 
                     val values = ContentValues().apply {
-                        put(DatabaseHelper.COLUMN_TITLE, title)
-                        put(DatabaseHelper.COLUMN_X1, x1)
-                        put(DatabaseHelper.COLUMN_Y1, y1)
-                        put(DatabaseHelper.COLUMN_X2, x2)
-                        put(DatabaseHelper.COLUMN_Y2, y2)
+                        put(DBHelper.COLUMN_TITLE, title)
+                        put(DBHelper.COLUMN_X1, x1)
+                        put(DBHelper.COLUMN_Y1, y1)
+                        put(DBHelper.COLUMN_X2, x2)
+                        put(DBHelper.COLUMN_Y2, y2)
                     }
-                    db.insert(DatabaseHelper.TABLE_NAME, null, values)
+                    db.insert(DBHelper.TABLE_NAME, null, values)
                 }
+                db.setTransactionSuccessful()
             } finally {
                 db.endTransaction()
             }
@@ -143,33 +131,50 @@ class MainActivity : AppCompatActivity() {
             e.printStackTrace()
         }
     }
+
     // 역 클릭해서 역 이름 뜨는 알림 띄워보기
     private fun handleImageClick(x: Int, y: Int) {
-        val db = dbHelper.readableDatabase
-        val cursor = db.query(DatabaseHelper.TABLE_NAME, null, null, null, null, null, null)
+        val drawable = photoView.drawable
+        if (drawable != null) {
+            val imageWidth = drawable.intrinsicWidth
+            val imageHeight = drawable.intrinsicHeight
 
-        var foundStation = false
+            // 클릭한 상대 좌표를 절대 좌표로 변환
+            val absoluteX = (x * imageWidth).toInt()
+            val absoluteY = (y * imageHeight).toInt()
 
-        if (cursor.moveToFirst()) {
-            do {
-                val title = cursor.getString(cursor.getColumnIndexOrThrow(DatabaseHelper.COLUMN_TITLE))
-                val x1 = cursor.getInt(cursor.getColumnIndexOrThrow(DatabaseHelper.COLUMN_X1))
-                val y1 = cursor.getInt(cursor.getColumnIndexOrThrow(DatabaseHelper.COLUMN_Y1))
-                val x2 = cursor.getInt(cursor.getColumnIndexOrThrow(DatabaseHelper.COLUMN_X2))
-                val y2 = cursor.getInt(cursor.getColumnIndexOrThrow(DatabaseHelper.COLUMN_Y2))
 
-                if (x in x1..x2 && y in y1..y2) {
-                    Toast.makeText(this, "Station: $title", Toast.LENGTH_SHORT).show()
-                    foundStation = true
-                    break
-                }
-            } while (cursor.moveToNext())
-        }
+            // 데이터베이스에서 절대 좌표 가져오기
+            val db = dbHelper.readableDatabase
+            val cursor = db.query(DBHelper.TABLE_NAME, null, null, null, null, null, null)
 
-        cursor.close()
+            var foundStation = false
 
-        if (!foundStation) {
-            Toast.makeText(this, "No station $x, $y", Toast.LENGTH_SHORT).show()
+            if (cursor.moveToFirst()) {
+                do {
+                    val title = cursor.getString(cursor.getColumnIndexOrThrow(DBHelper.COLUMN_TITLE))
+                    val x1 = cursor.getFloat(cursor.getColumnIndexOrThrow(DBHelper.COLUMN_X1)).toInt()
+                    val y1 = cursor.getFloat(cursor.getColumnIndexOrThrow(DBHelper.COLUMN_Y1)).toInt()
+                    val x2 = cursor.getFloat(cursor.getColumnIndexOrThrow(DBHelper.COLUMN_X2)).toInt()
+                    val y2 = cursor.getFloat(cursor.getColumnIndexOrThrow(DBHelper.COLUMN_Y2)).toInt()
+
+                    // 로그 출력
+                    Log.d("MainActivity", "DB coordinates: ($x1, $y1, $x2, $y2)")
+
+                    // 클릭한 좌표가 DB에 저장된 좌표 범위 안에 있는지 확인
+                    if (absoluteX in x1..x2 && absoluteY in y1..y2) {
+                        Toast.makeText(this, "Station: $title", Toast.LENGTH_SHORT).show()
+                        foundStation = true
+                        break
+                    }
+                } while (cursor.moveToNext())
+            }
+
+            cursor.close()
+
+            if (!foundStation) {
+                Toast.makeText(this, "No station found at ($absoluteX, $absoluteY)", Toast.LENGTH_SHORT).show()
+            }
         }
     }
 }
