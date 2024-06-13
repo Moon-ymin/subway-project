@@ -10,8 +10,9 @@
 
     <item
         android:id="@+id/action_toggle"
+        android:icon="@drawable/busan_metro_eng"
         android:actionLayout="@layout/main_lan_switch"
-        android:title=""
+        android:title="language"
         app:showAsAction="always" />
 
 </menu>

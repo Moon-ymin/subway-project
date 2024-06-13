@@ -8,7 +8,6 @@ import android.view.MenuItem
 import android.widget.Button
 import android.widget.PopupMenu
 import android.widget.RelativeLayout
-import android.widget.Switch
 import androidx.appcompat.widget.SearchView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
@@ -72,10 +71,13 @@ class MainActivity : AppCompatActivity() {
         // 토글 버튼 설정
         val toggleItem = menu.findItem(R.id.action_toggle)
         val labeledSwitch = toggleItem.actionView?.findViewById<LabeledSwitch>(R.id.lan_switch)
+
         labeledSwitch?.setOnToggledListener { labeledSwitch, isOn ->
             // 토글 상태 변경 시 처리할 로직
             if (isOn) {
                 photoView.setImageResource(R.drawable.busan_metro_kor)
+            } else {
+                photoView.setImageResource(R.drawable.busan_metro_eng)
             }
         }
         toggleItem.setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS)
@@ -94,28 +96,33 @@ class MainActivity : AppCompatActivity() {
     }
 
 
-
     // 버튼 위치 업데이트 함수
-    private fun updateButtonPositions() {
+// updateButtonPositions : photoView 에서 이미지를 확대, 축소 및 이동할 때 버튼의 위치를 업데이트 하는 역할
+    private fun updateButtonPositions() {   // 현재 변환 상태를 기반으로 버튼들의 위치를 업데이트
+        // 1. 현재 화면의 매트릭스 가져옴 : photoView에 적용된 변환(확대, 축소, 이동) 정보를 가지고 있음
         val matrix = Matrix()
         photoView.getDisplayMatrix(matrix)
-
-        val matrixValues = FloatArray(9)
+        // 2. Matrix 값을 배열에 저장
+        val matrixValues = FloatArray(9)    // 3 X 3 매트릭스를 배열 형태로 나타냄
         matrix.getValues(matrixValues)
 
-        // 각 버튼의 원래 위치에 matrix 변환 적용
-        updateButtonPosition(binding.station1, 700f, 500f, matrixValues)
+        // 3. 버튼 위치 업데이트 : 각 버튼의 원래 위치에 matrix 변환 적용
+        updateButtonPosition(binding.station1, 150f, 150f, matrixValues)
 
         // 추가 역 버튼들에 대해서도 동일하게 처리
     }
-
+    // updateButtonPosition : 원래 이미지 좌표를 기반으로 매트릭스 변환을 적용하여 버튼의 위치를 업데이트 하는 함수
     private fun updateButtonPosition(button: Button, origX: Float, origY: Float, matrixValues: FloatArray) {
+        // 1. Matrix 변환 적용
+        // scaledX, scaledY : 새로운 좌표
+        // origX, origY : 원래 좌표
+        // Matrix.MSCALE_X, Matrix.MSCALE_Y : 확대 / 축소 값
+        // Matrix.MTRANS_X, Matrix.MTRANS_Y : 이동 값
         val scaledX = origX * matrixValues[Matrix.MSCALE_X] + matrixValues[Matrix.MTRANS_X]
         val scaledY = origY * matrixValues[Matrix.MSCALE_Y] + matrixValues[Matrix.MTRANS_Y]
+        // 2. 버튼 위치 설정
+        // 계산된 새로운 위치 값을 버튼의 x, y 속성에 설정 : 버튼이 이미지의 변환 상태에 맞춰 정확히 위치하도록 함
         button.x = scaledX
         button.y = scaledY
     }
-
-
-
 }

@@ -9,8 +9,9 @@
         android:layout_width="70sp"
         android:layout_height="40sp"
         android:textSize="13sp"
+        app:textOn="KOR"
+        app:textOff="ENG"
         app:colorBorder="@color/colorAccent"
-        app:on="false"
         />
 
 </RelativeLayout>
