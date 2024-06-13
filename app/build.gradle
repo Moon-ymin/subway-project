@@ -48,4 +48,6 @@ dependencies {
     implementation 'com.github.chrisbanes:PhotoView:2.3.0'
     // toggleButton
     implementation 'com.github.angads25:toggle:1.1.0'
+    // HTML parser Jsoup
+    implementation 'org.jsoup:jsoup:1.17.2'
 }
