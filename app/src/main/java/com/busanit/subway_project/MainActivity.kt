@@ -1,9 +1,13 @@
 package com.busanit.subway_project
 
 import android.app.SearchManager
+import android.content.ContentValues
 import android.content.Context
+import android.database.Cursor
 import android.graphics.Matrix
+import android.graphics.RectF
 import android.os.Bundle
+import android.util.Log
 import android.util.TypedValue
 import android.view.Menu
 import android.view.MenuItem
@@ -15,14 +19,19 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
 import com.busanit.subway_project.databinding.ActivityMainBinding
+import com.busanit.subway_project.helper.DatabaseHelper
 import com.github.angads25.toggle.widget.LabeledSwitch
 import com.github.chrisbanes.photoview.PhotoView
+import org.jsoup.Jsoup
+import java.io.IOError
+import java.io.IOException
 
 class MainActivity : AppCompatActivity() {
 
     private lateinit var photoView: PhotoView
     private lateinit var buttonsContainer: RelativeLayout
     private lateinit var binding: ActivityMainBinding
+    private lateinit var dbHelper: DatabaseHelper
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -35,32 +44,35 @@ class MainActivity : AppCompatActivity() {
         val toolbar: Toolbar = findViewById(R.id.toolbar)
         setSupportActionBar(toolbar) // 툴바를 액션바로 설정
 
-        // Matrix 변화 감지 리스너 등록
-        photoView.setOnMatrixChangeListener {
-            updateButtonPositions()
-        }
+        // HTML 파일에서 데이터 읽기
+        dbHelper = DatabaseHelper(this)
+        parseHtmlAndInsertData()
 
-        // 각 역 버튼에 이벤트 등록
-        val station1: Button = binding.station1
-        station1.setOnClickListener {view ->
-            // 역 버튼 클릭 시 이벤트 처리
-            val popupMenu = PopupMenu(applicationContext, view)
-            popupMenu.inflate(R.menu.main_popup)
-            popupMenu.setOnMenuItemClickListener { menuItem ->
-                when (menuItem.itemId) {
-                    R.id.menu1 -> Toast.makeText(this@MainActivity, "출발!", Toast.LENGTH_SHORT).show()
-                    R.id.menu2 -> Toast.makeText(this@MainActivity, "경유!", Toast.LENGTH_SHORT).show()
-                    else -> Toast.makeText(this@MainActivity, "도착!", Toast.LENGTH_SHORT).show()
-                }
-                true
+        // 예제: 클릭 이벤트 처리
+        photoView.setOnPhotoTapListener { view, x, y ->
+            // x, y는 이미지의 상대적인 좌표 (0.0 ~ 1.0)
+            val drawable = photoView.drawable
+            if (drawable != null ) {
+                val imageMatrix = Matrix(photoView.imageMatrix)
+                val imageRect = RectF(0f, 0f, drawable.intrinsicWidth.toFloat(), drawable.intrinsicHeight.toFloat())
+                imageMatrix.mapRect(imageRect)
+
+                // 변환된 좌표
+                val absoluteX = (imageRect.left + x * imageRect.width()).toInt()
+                val absoluteY = (imageRect.top + y * imageRect.height()).toInt()
+
+                // 로그 출력
+                Log.d("PhotoView", "Relative coordinates: ($x, $y)")
+                Log.d("PhotoView", "Absolute coordinates: ($absoluteX, $absoluteY)")
+
+                handleImageClick(absoluteX, absoluteY)
             }
-            popupMenu.show()
         }
 
-        // 추가 역 버튼들에 대해서도 동일하게 처리
 
     }
 
+    // 상단바 설정
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
         menuInflater.inflate(R.menu.main_search, menu)
 
@@ -97,34 +109,67 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+    // HTML 파서
+    private fun parseHtmlAndInsertData() {
+        try {
+            val inputStream = assets.open("station_points.html")
+            val doc = Jsoup.parse(inputStream, "UTF-8", "")
+            val areas = doc.select("area")
 
-    // 버튼 위치 업데이트 함수
-// updateButtonPositions : photoView 에서 이미지를 확대, 축소 및 이동할 때 버튼의 위치를 업데이트 하는 역할
-    private fun updateButtonPositions() {   // 현재 변환 상태를 기반으로 버튼들의 위치를 업데이트
-        // 1. 현재 화면의 매트릭스 가져옴 : photoView에 적용된 변환(확대, 축소, 이동) 정보를 가지고 있음
-        val matrix = Matrix()
-        photoView.getDisplayMatrix(matrix)
-        // 2. Matrix 값을 배열에 저장
-        val matrixValues = FloatArray(9)    // 3 X 3 매트릭스를 배열 형태로 나타냄
-        matrix.getValues(matrixValues)
+            val db = dbHelper.writableDatabase
+            db.beginTransaction()
+            try {
+                for (area in areas) {
+                    val title = area.attr("title")
+                    val coords = area.attr("coords").split(",")
+                    val x1 = coords[0].toInt()
+                    val y1 = coords[1].toInt()
+                    val x2 = coords[2].toInt()
+                    val y2 = coords[3].toInt()
 
-        // 3. 버튼 위치 업데이트 : 각 버튼의 원래 위치에 matrix 변환 적용
-        updateButtonPosition(binding.station1, 1300f,680f, matrixValues)
-
-        // 추가 역 버튼들에 대해서도 동일하게 처리
+                    val values = ContentValues().apply {
+                        put(DatabaseHelper.COLUMN_TITLE, title)
+                        put(DatabaseHelper.COLUMN_X1, x1)
+                        put(DatabaseHelper.COLUMN_Y1, y1)
+                        put(DatabaseHelper.COLUMN_X2, x2)
+                        put(DatabaseHelper.COLUMN_Y2, y2)
+                    }
+                    db.insert(DatabaseHelper.TABLE_NAME, null, values)
+                }
+            } finally {
+                db.endTransaction()
+            }
+        } catch (e: IOException) {
+            e.printStackTrace()
+        }
     }
-    // updateButtonPosition : 원래 이미지 좌표를 기반으로 매트릭스 변환을 적용하여 버튼의 위치를 업데이트 하는 함수
-    private fun updateButtonPosition(button: Button, origX: Float, origY: Float, matrixValues: FloatArray) {
-        // 1. Matrix 변환 적용
-        // scaledX, scaledY : 새로운 좌표
-        // origX, origY : 원래 좌표
-        // Matrix.MSCALE_X, Matrix.MSCALE_Y : 확대 / 축소 값
-        // Matrix.MTRANS_X, Matrix.MTRANS_Y : 이동 값
-        val scaledX = origX * matrixValues[Matrix.MSCALE_X] + matrixValues[Matrix.MTRANS_X]
-        val scaledY = origY * matrixValues[Matrix.MSCALE_Y] + matrixValues[Matrix.MTRANS_Y]
-        // 2. 버튼 위치 설정
-        // 계산된 새로운 위치 값을 버튼의 x, y 속성에 설정 : 버튼이 이미지의 변환 상태에 맞춰 정확히 위치하도록 함
-        button.x = scaledX
-        button.y = scaledY
+    // 역 클릭해서 역 이름 뜨는 알림 띄워보기
+    private fun handleImageClick(x: Int, y: Int) {
+        val db = dbHelper.readableDatabase
+        val cursor = db.query(DatabaseHelper.TABLE_NAME, null, null, null, null, null, null)
+
+        var foundStation = false
+
+        if (cursor.moveToFirst()) {
+            do {
+                val title = cursor.getString(cursor.getColumnIndexOrThrow(DatabaseHelper.COLUMN_TITLE))
+                val x1 = cursor.getInt(cursor.getColumnIndexOrThrow(DatabaseHelper.COLUMN_X1))
+                val y1 = cursor.getInt(cursor.getColumnIndexOrThrow(DatabaseHelper.COLUMN_Y1))
+                val x2 = cursor.getInt(cursor.getColumnIndexOrThrow(DatabaseHelper.COLUMN_X2))
+                val y2 = cursor.getInt(cursor.getColumnIndexOrThrow(DatabaseHelper.COLUMN_Y2))
+
+                if (x in x1..x2 && y in y1..y2) {
+                    Toast.makeText(this, "Station: $title", Toast.LENGTH_SHORT).show()
+                    foundStation = true
+                    break
+                }
+            } while (cursor.moveToNext())
+        }
+
+        cursor.close()
+
+        if (!foundStation) {
+            Toast.makeText(this, "No station $x, $y", Toast.LENGTH_SHORT).show()
+        }
     }
 }
