@@ -1,8 +1,10 @@
 package com.busanit.subway_project
 
 import android.app.SearchManager
+import android.content.Context
 import android.graphics.Matrix
 import android.os.Bundle
+import android.util.TypedValue
 import android.view.Menu
 import android.view.MenuItem
 import android.widget.Button
@@ -75,9 +77,9 @@ class MainActivity : AppCompatActivity() {
         labeledSwitch?.setOnToggledListener { labeledSwitch, isOn ->
             // 토글 상태 변경 시 처리할 로직
             if (isOn) {
-                photoView.setImageResource(R.drawable.busan_metro_kor)
-            } else {
                 photoView.setImageResource(R.drawable.busan_metro_eng)
+            } else {
+                photoView.setImageResource(R.drawable.busan_metro_kor)
             }
         }
         toggleItem.setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS)
@@ -107,7 +109,7 @@ class MainActivity : AppCompatActivity() {
         matrix.getValues(matrixValues)
 
         // 3. 버튼 위치 업데이트 : 각 버튼의 원래 위치에 matrix 변환 적용
-        updateButtonPosition(binding.station1, 150f, 150f, matrixValues)
+        updateButtonPosition(binding.station1, 1300f,680f, matrixValues)
 
         // 추가 역 버튼들에 대해서도 동일하게 처리
     }
