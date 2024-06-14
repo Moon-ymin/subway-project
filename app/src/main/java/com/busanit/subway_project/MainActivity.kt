@@ -2,7 +2,6 @@ package com.busanit.subway_project
 
 import DBHelper
 import android.app.SearchManager
-import android.content.ContentValues
 import android.os.Bundle
 import android.util.Log
 import android.view.Menu
@@ -14,8 +13,6 @@ import androidx.appcompat.widget.Toolbar
 import com.busanit.subway_project.databinding.ActivityMainBinding
 import com.github.angads25.toggle.widget.LabeledSwitch
 import com.github.chrisbanes.photoview.PhotoView
-import org.jsoup.Jsoup
-import java.io.IOException
 
 class MainActivity : AppCompatActivity() {
 
@@ -68,6 +65,20 @@ class MainActivity : AppCompatActivity() {
         val searchManager = getSystemService(SEARCH_SERVICE) as SearchManager
         searchView.setSearchableInfo(searchManager.getSearchableInfo(componentName))
 
+        // SearchView 검색 기능 구현
+        searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
+            override fun onQueryTextSubmit(query: String?): Boolean {
+                // 입력된 검색어 토스트 메시지로 띄우기
+                Toast.makeText(this@MainActivity, "검색어 : $query", Toast.LENGTH_SHORT).show()
+                return false
+            }
+
+            override fun onQueryTextChange(newText: String?): Boolean {
+                return false
+            }
+
+        })
+
         // 토글 버튼 설정
         val toggleItem = menu.findItem(R.id.action_toggle)
         val labeledSwitch = toggleItem.actionView?.findViewById<LabeledSwitch>(R.id.lan_switch)
@@ -88,7 +99,7 @@ class MainActivity : AppCompatActivity() {
     private fun handleImageClick(x: Int, y: Int) {  // 클릭 이벤트로 가져온 절대좌표
         val drawable = photoView.drawable
         if (drawable != null) {
-
+            Log.d("MainActivity", "absoluteclick:($x, $y) ")
             // 데이터베이스에서 절대 좌표 가져오기
             val db = dbHelper.readableDatabase
             val cursor = db.query(DBHelper.TABLE_NAME, null, null, null, null, null, null)
@@ -102,7 +113,7 @@ class MainActivity : AppCompatActivity() {
                     val y1 = cursor.getFloat(cursor.getColumnIndexOrThrow(DBHelper.COLUMN_Y1)).toInt()
                     val x2 = cursor.getFloat(cursor.getColumnIndexOrThrow(DBHelper.COLUMN_X2)).toInt()
                     val y2 = cursor.getFloat(cursor.getColumnIndexOrThrow(DBHelper.COLUMN_Y2)).toInt()
-
+                    //Log.d("MainActivity", "db Click: ($title : $x1, $y1, $x2, $y2)")
 
                     // 클릭한 좌표가 DB에 저장된 좌표 범위 안에 있는지 확인
                     if (x in x1..x2 && y in y1..y2) {
