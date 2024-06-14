@@ -140,7 +140,7 @@ class MainActivity : AppCompatActivity() {
         }
 
         // 팝업 창이 표시될 위치 설정
-        popupWindow.showAtLocation(v, Gravity.NO_GRAVITY, 0, 0)
+        popupWindow.showAtLocation(v, Gravity.CENTER, 100, 100)
         popupWindow.isOutsideTouchable = false
         popupWindow.isFocusable = true
     }
