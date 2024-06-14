@@ -85,17 +85,6 @@ class MainActivity : AppCompatActivity() {
         return true
     }
 
-    override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        return when (item.itemId) {
-            R.id.action_toggle -> {
-                // 토글 버튼을 클릭했을 때 동작 구현
-                Toast.makeText(this, "클릭!", Toast.LENGTH_SHORT).show()
-                true
-            }
-            else -> super.onOptionsItemSelected(item)
-        }
-    }
-
     // HTML 파서
     private fun parseHtmlAndInsertData() {
         try {
