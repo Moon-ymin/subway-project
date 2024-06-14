@@ -35,7 +35,6 @@ class MainActivity : AppCompatActivity() {
 
         // HTML 파일에서 데이터 읽기
         dbHelper = DBHelper(this)
-        parseHtmlAndInsertData()
 
         // 클릭 이벤트 처리
         photoView.setOnPhotoTapListener { view, x, y ->
@@ -85,64 +84,10 @@ class MainActivity : AppCompatActivity() {
         return true
     }
 
-    override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        return when (item.itemId) {
-            R.id.action_toggle -> {
-                // 토글 버튼을 클릭했을 때 동작 구현
-                Toast.makeText(this, "클릭!", Toast.LENGTH_SHORT).show()
-                true
-            }
-            else -> super.onOptionsItemSelected(item)
-        }
-    }
-
-    // HTML 파서
-    private fun parseHtmlAndInsertData() {
-        try {
-            val inputStream = assets.open("station_points.html")
-            val doc = Jsoup.parse(inputStream, "UTF-8", "")
-            val areas = doc.select("area")
-
-            val db = dbHelper.writableDatabase
-            db.beginTransaction()
-            try {
-                for (area in areas) {
-                    val title = area.attr("title")
-                    val coords = area.attr("coords").split(",")
-                    val x1 = coords[0].toFloat()
-                    val y1 = coords[1].toFloat()
-                    val x2 = coords[2].toFloat()
-                    val y2 = coords[3].toFloat()
-
-                    val values = ContentValues().apply {
-                        put(DBHelper.COLUMN_TITLE, title)
-                        put(DBHelper.COLUMN_X1, x1)
-                        put(DBHelper.COLUMN_Y1, y1)
-                        put(DBHelper.COLUMN_X2, x2)
-                        put(DBHelper.COLUMN_Y2, y2)
-                    }
-                    db.insert(DBHelper.TABLE_NAME, null, values)
-                }
-                db.setTransactionSuccessful()
-            } finally {
-                db.endTransaction()
-            }
-        } catch (e: IOException) {
-            e.printStackTrace()
-        }
-    }
-
     // 역 클릭해서 역 이름 뜨는 알림 띄워보기
-    private fun handleImageClick(x: Int, y: Int) {
+    private fun handleImageClick(x: Int, y: Int) {  // 클릭 이벤트로 가져온 절대좌표
         val drawable = photoView.drawable
         if (drawable != null) {
-            val imageWidth = drawable.intrinsicWidth
-            val imageHeight = drawable.intrinsicHeight
-
-            // 클릭한 상대 좌표를 절대 좌표로 변환
-            val absoluteX = (x * imageWidth).toInt()
-            val absoluteY = (y * imageHeight).toInt()
-
 
             // 데이터베이스에서 절대 좌표 가져오기
             val db = dbHelper.readableDatabase
@@ -158,11 +103,9 @@ class MainActivity : AppCompatActivity() {
                     val x2 = cursor.getFloat(cursor.getColumnIndexOrThrow(DBHelper.COLUMN_X2)).toInt()
                     val y2 = cursor.getFloat(cursor.getColumnIndexOrThrow(DBHelper.COLUMN_Y2)).toInt()
 
-                    // 로그 출력
-                    Log.d("MainActivity", "DB coordinates: ($x1, $y1, $x2, $y2)")
 
                     // 클릭한 좌표가 DB에 저장된 좌표 범위 안에 있는지 확인
-                    if (absoluteX in x1..x2 && absoluteY in y1..y2) {
+                    if (x in x1..x2 && y in y1..y2) {
                         Toast.makeText(this, "Station: $title", Toast.LENGTH_SHORT).show()
                         foundStation = true
                         break
@@ -173,7 +116,7 @@ class MainActivity : AppCompatActivity() {
             cursor.close()
 
             if (!foundStation) {
-                Toast.makeText(this, "No station found at ($absoluteX, $absoluteY)", Toast.LENGTH_SHORT).show()
+                Toast.makeText(this, "No station found at ($x, $y)", Toast.LENGTH_SHORT).show()
             }
         }
     }

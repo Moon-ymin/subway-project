@@ -3,8 +3,10 @@ import android.content.Context
 import android.database.Cursor
 import android.database.sqlite.SQLiteDatabase
 import android.database.sqlite.SQLiteOpenHelper
+import org.jsoup.Jsoup
+import java.io.IOException
 
-class DBHelper(context: Context) : SQLiteOpenHelper(context, DATABASE_NAME, null, DATABASE_VERSION) {
+class DBHelper(val context: Context) : SQLiteOpenHelper(context, DATABASE_NAME, null, DATABASE_VERSION) {
 
     companion object {
         private const val DATABASE_NAME = "station_points.db"
@@ -27,6 +29,9 @@ class DBHelper(context: Context) : SQLiteOpenHelper(context, DATABASE_NAME, null
                 "$COLUMN_X2 INTEGER, " +
                 "$COLUMN_Y2 INTEGER)"
         db?.execSQL(createTable)
+
+        // DB가 처음 생성될 때 데이터 삽입
+        parseHtmlAndInsertData()
     }
 
     // 2. DB 버전이 업그레이드될 때 호출되며, 기존 테이블을 삭제하고 다시 생성
@@ -62,5 +67,42 @@ class DBHelper(context: Context) : SQLiteOpenHelper(context, DATABASE_NAME, null
         val exists = cursor.count > 0
         cursor.close()
         return exists
+    }
+
+
+    // HTML 파서
+    private fun parseHtmlAndInsertData() {
+        try {
+            val inputStream = context.assets.open("station_points.html")
+            val doc = Jsoup.parse(inputStream, "UTF-8", "")
+            val areas = doc.select("area")
+
+            val db = writableDatabase
+            db.beginTransaction()
+            try {
+                for (area in areas) {
+                    val title = area.attr("title")
+                    val coords = area.attr("coords").split(",")
+                    val x1 = coords[0].toFloat()
+                    val y1 = coords[1].toFloat()
+                    val x2 = coords[2].toFloat()
+                    val y2 = coords[3].toFloat()
+
+                    val values = ContentValues().apply {
+                        put(DBHelper.COLUMN_TITLE, title)
+                        put(DBHelper.COLUMN_X1, x1)
+                        put(DBHelper.COLUMN_Y1, y1)
+                        put(DBHelper.COLUMN_X2, x2)
+                        put(DBHelper.COLUMN_Y2, y2)
+                    }
+                    db.insert(DBHelper.TABLE_NAME, null, values)
+                }
+                db.setTransactionSuccessful()
+            } finally {
+                db.endTransaction()
+            }
+        } catch (e: IOException) {
+            e.printStackTrace()
+        }
     }
 }
