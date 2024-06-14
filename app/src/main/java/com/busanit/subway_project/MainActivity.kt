@@ -1,13 +1,21 @@
 package com.busanit.subway_project
 
 import DBHelper
+import android.annotation.SuppressLint
 import android.app.SearchManager
 import android.os.Bundle
 import android.util.Log
+import android.view.Gravity
 import android.view.Menu
 import android.view.MenuItem
+import android.view.View
+import android.view.ViewGroup
+import android.widget.PopupWindow
+import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.widget.AppCompatButton
+import androidx.appcompat.widget.DialogTitle
 import androidx.appcompat.widget.SearchView
 import androidx.appcompat.widget.Toolbar
 import com.busanit.subway_project.databinding.ActivityMainBinding
@@ -19,6 +27,7 @@ class MainActivity : AppCompatActivity() {
     private lateinit var photoView: PhotoView
     private lateinit var binding: ActivityMainBinding
     private lateinit var dbHelper: DBHelper
+    private var isEng = false   // 한 영 버전 여부 플래그
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -27,13 +36,14 @@ class MainActivity : AppCompatActivity() {
 
         photoView = binding.photoView
 
+        // 상단바 구현
         val toolbar: Toolbar = findViewById(R.id.toolbar)
         setSupportActionBar(toolbar) // 툴바를 액션바로 설정
 
         // HTML 파일에서 데이터 읽기
         dbHelper = DBHelper(this)
 
-        // 클릭 이벤트 처리
+        // 클릭 이벤트 처리 : 메인 화면 속 역 클릭하면 -> 팝업 메뉴 뜨게
         photoView.setOnPhotoTapListener { view, x, y ->
             val drawable = photoView.drawable
             if (drawable != null) {
@@ -44,10 +54,10 @@ class MainActivity : AppCompatActivity() {
                 val absoluteX = (x * imageWidth).toInt()
                 val absoluteY = (y * imageHeight).toInt()
 
-                // 변환된 절대 좌표 출력
+                /*// 변환된 절대 좌표 출력
                 Log.d("MainActivity", "Relative coordinates: ($x, $y)")
                 Log.d("MainActivity", "Absolute coordinates: ($absoluteX, $absoluteY)")
-
+*/
                 // 이후 처리 로직 구현
                 handleImageClick(absoluteX, absoluteY)
             }
@@ -86,20 +96,61 @@ class MainActivity : AppCompatActivity() {
         labeledSwitch?.setOnToggledListener { _, isOn ->
             // 토글 상태 변경 시 처리할 로직
             if (isOn) {
+                isEng = true
                 photoView.setImageResource(R.drawable.busan_metro_eng)
             } else {
+                isEng = false
                 photoView.setImageResource(R.drawable.busan_metro_kor)
             }
         }
         toggleItem.setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS)
         return true
     }
+    // 역 클릭 팝업 메뉴 ( 출발, 경유, 도착 선택 ) 생성, 보여주는 메서드
+    private fun showPopup(v: View, title: String) {
+        // 한영 버전
+        var popupView = layoutInflater.inflate(R.layout.main_popup_kr, null)
+        if (isEng) {   // 영어 버전인 경우
+           popupView = layoutInflater.inflate(R.layout.main_popup_en, null)
+        }
+        val popupWindow = PopupWindow(popupView,
+            ViewGroup.LayoutParams.WRAP_CONTENT,
+            ViewGroup.LayoutParams.WRAP_CONTENT)
+
+        // 역 이름 설정
+        val stationTextView = popupView.findViewById<TextView>(R.id.station)
+        stationTextView.text = title
+
+        // 메뉴 아이템 클릭 이벤트 설정
+        popupView.findViewById<TextView>(R.id.menu0).setOnClickListener {
+            Toast.makeText(this, "취소!", Toast.LENGTH_SHORT).show()
+            popupWindow.dismiss()
+        }
+        popupView.findViewById<TextView>(R.id.menu1).setOnClickListener {
+            Toast.makeText(this, "출발!", Toast.LENGTH_SHORT).show()
+            popupWindow.dismiss()
+        }
+        popupView.findViewById<TextView>(R.id.menu2).setOnClickListener {
+            Toast.makeText(this, "경유!", Toast.LENGTH_SHORT).show()
+            popupWindow.dismiss()
+        }
+        popupView.findViewById<TextView>(R.id.menu3).setOnClickListener {
+            Toast.makeText(this, "도착!", Toast.LENGTH_SHORT).show()
+            popupWindow.dismiss()
+        }
+
+        // 팝업 창이 표시될 위치 설정
+        popupWindow.showAtLocation(v, Gravity.NO_GRAVITY, 0, 0)
+        popupWindow.isOutsideTouchable = false
+        popupWindow.isFocusable = true
+    }
+
 
     // 역 클릭해서 역 이름 뜨는 알림 띄워보기
-    private fun handleImageClick(x: Int, y: Int) {  // 클릭 이벤트로 가져온 절대좌표
+    private fun handleImageClick(abx: Int, aby: Int) {  // 클릭 이벤트로 가져온 절대좌표
         val drawable = photoView.drawable
         if (drawable != null) {
-            Log.d("MainActivity", "absoluteclick:($x, $y) ")
+            Log.d("MainActivity", "absoluteclick:($abx, $aby) ")
             // 데이터베이스에서 절대 좌표 가져오기
             val db = dbHelper.readableDatabase
             val cursor = db.query(DBHelper.TABLE_NAME, null, null, null, null, null, null)
@@ -116,9 +167,11 @@ class MainActivity : AppCompatActivity() {
                     //Log.d("MainActivity", "db Click: ($title : $x1, $y1, $x2, $y2)")
 
                     // 클릭한 좌표가 DB에 저장된 좌표 범위 안에 있는지 확인
-                    if (x in x1..x2 && y in y1..y2) {
-                        Toast.makeText(this, "Station: $title", Toast.LENGTH_SHORT).show()
+                    if (abx in x1..x2 && aby in y1..y2) {
+                        // 역 이름 뜨는지 확인
+                        //Toast.makeText(this, "Station: $title", Toast.LENGTH_SHORT).show()
                         foundStation = true
+                        showPopup(binding.photoView, title)
                         break
                     }
                 } while (cursor.moveToNext())
@@ -127,7 +180,7 @@ class MainActivity : AppCompatActivity() {
             cursor.close()
 
             if (!foundStation) {
-                Toast.makeText(this, "No station found at ($x, $y)", Toast.LENGTH_SHORT).show()
+                Toast.makeText(this, "No station found at ($abx, $aby)", Toast.LENGTH_SHORT).show()
             }
         }
     }
