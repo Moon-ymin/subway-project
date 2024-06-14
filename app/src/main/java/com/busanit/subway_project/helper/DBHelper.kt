@@ -35,32 +35,4 @@ class DBHelper(context: Context) : SQLiteOpenHelper(context, DATABASE_NAME, null
         onCreate(db)
     }
 
-    // 3. 데이터 삽입 시 중복된 scode 체크 후 삽입
-    fun insertOrIgnore(scode: String, x1: Float, y1: Float, x2: Float, y2: Float): Boolean {
-        val db = writableDatabase
-
-        // 이미 존재하는지 확인
-        if (!isRecordExists(db, scode)) {
-            val contentValues = ContentValues().apply {
-                put(COLUMN_TITLE, scode)
-                put(COLUMN_X1, x1.toInt())
-                put(COLUMN_Y1, y1.toInt())
-                put(COLUMN_X2, x2.toInt())
-                put(COLUMN_Y2, y2.toInt())
-            }
-
-            db.insert(TABLE_NAME, null, contentValues)
-            return true
-        }
-        return false
-    }
-
-    // 데이터베이스에 scode가 이미 존재하는지 확인
-    private fun isRecordExists(db: SQLiteDatabase, scode: String): Boolean {
-        val query = "SELECT * FROM $TABLE_NAME WHERE $COLUMN_TITLE = ?"
-        val cursor: Cursor = db.rawQuery(query, arrayOf(scode))
-        val exists = cursor.count > 0
-        cursor.close()
-        return exists
-    }
 }
