@@ -35,7 +35,6 @@ class MainActivity : AppCompatActivity() {
 
         // HTML 파일에서 데이터 읽기
         dbHelper = DBHelper(this)
-        // parseHtmlAndInsertData()
 
         // 클릭 이벤트 처리
         photoView.setOnPhotoTapListener { view, x, y ->
@@ -85,49 +84,10 @@ class MainActivity : AppCompatActivity() {
         return true
     }
 
-    // HTML 파서
-    private fun parseHtmlAndInsertData() {
-        try {
-            val inputStream = assets.open("station_points.html")
-            val doc = Jsoup.parse(inputStream, "UTF-8", "")
-            val areas = doc.select("area")
-
-            val db = dbHelper.writableDatabase
-            db.beginTransaction()
-            try {
-                for (area in areas) {
-                    val title = area.attr("title")
-                    val coords = area.attr("coords").split(",")
-                    val x1 = coords[0].toFloat()
-                    val y1 = coords[1].toFloat()
-                    val x2 = coords[2].toFloat()
-                    val y2 = coords[3].toFloat()
-
-                    val values = ContentValues().apply {
-                        put(DBHelper.COLUMN_TITLE, title)
-                        put(DBHelper.COLUMN_X1, x1)
-                        put(DBHelper.COLUMN_Y1, y1)
-                        put(DBHelper.COLUMN_X2, x2)
-                        put(DBHelper.COLUMN_Y2, y2)
-                    }
-                    db.insert(DBHelper.TABLE_NAME, null, values)
-                }
-                db.setTransactionSuccessful()
-            } finally {
-                db.endTransaction()
-            }
-        } catch (e: IOException) {
-            e.printStackTrace()
-        }
-    }
-
     // 역 클릭해서 역 이름 뜨는 알림 띄워보기
-    private fun handleImageClick(x: Int, y: Int) {  // 클릭 당시 절대좌표
+    private fun handleImageClick(x: Int, y: Int) {  // 클릭 이벤트로 가져온 절대좌표
         val drawable = photoView.drawable
         if (drawable != null) {
-            /*val imageWidth = drawable.intrinsicWidth
-            val imageHeight = drawable.intrinsicHeight*/
-
 
             // 데이터베이스에서 절대 좌표 가져오기
             val db = dbHelper.readableDatabase
