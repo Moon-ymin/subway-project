@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<network-security-config>
+    <base-config cleartextTrafficPermitted="true">
+        <trust-anchors>
+            <!-- 특정 인증 기관의 인증서 추가 -->
+        </trust-anchors>
+    </base-config>
+</network-security-config>

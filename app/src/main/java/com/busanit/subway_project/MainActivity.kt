@@ -1,7 +1,6 @@
 package com.busanit.subway_project
 
 import DBHelper
-import android.annotation.SuppressLint
 import android.app.SearchManager
 import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
@@ -13,18 +12,20 @@ import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
 import android.view.WindowManager
-import android.widget.LinearLayout
 import android.widget.PopupWindow
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
-import androidx.appcompat.widget.AppCompatButton
-import androidx.appcompat.widget.DialogTitle
 import androidx.appcompat.widget.SearchView
 import androidx.appcompat.widget.Toolbar
 import com.busanit.subway_project.databinding.ActivityMainBinding
+import com.busanit.subway_project.model.Station
+import com.busanit.subway_project.retrofit.RetrofitClient
 import com.github.angads25.toggle.widget.LabeledSwitch
 import com.github.chrisbanes.photoview.PhotoView
+import retrofit2.Callback
+import retrofit2.Call
+import retrofit2.Response
 
 class MainActivity : AppCompatActivity() {
 
@@ -128,9 +129,29 @@ class MainActivity : AppCompatActivity() {
             true // Focusable
         )
 
-        // 역 이름 설정
+        // 역 이름 설정 : title 은 scode -> station 테이블에서 sname 가져오기
         val stationTextView = popupView.findViewById<TextView>(R.id.station)
-        stationTextView.text = title
+
+        // Retrofit을 통해 서버에서 데이터 가져오기
+        RetrofitClient.stationService.getStationById(title.toLong()).enqueue(object : Callback<Station> {
+            override fun onResponse(call: Call<Station>, response: Response<Station>) {
+                if (response.isSuccessful) {
+                    val station = response.body()
+                    station?.let {
+                        val name = it.sname
+                        stationTextView.text = name  // TextView에 sname 설정
+                        Log.d("MainActivity", "Station name: $name")
+                    }
+                } else {
+                    Log.e("MainActivity", "Request failed: ${response.code()}")
+                }
+            }
+
+            override fun onFailure(call: Call<Station>, t: Throwable) {
+                Log.e("MainActivity", "Request failed: ${t.message}")
+            }
+        })
+
 
         // 메뉴 아이템 클릭 이벤트 설정
         popupView.findViewById<View>(R.id.menu1).setOnClickListener {
