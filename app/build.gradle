@@ -50,4 +50,9 @@ dependencies {
     implementation 'com.github.angads25:toggle:1.1.0'
     // HTML parser Jsoup
     implementation 'org.jsoup:jsoup:1.17.2'
+
+    // https://mvnrepository.com/artifact/com.squareup.retrofit2/converter-gson
+    implementation 'com.squareup.retrofit2:converter-gson:2.9.0'
+    // https://mvnrepository.com/artifact/com.squareup.retrofit2/retrofit
+    implementation 'com.squareup.retrofit2:retrofit:2.9.0'
 }
