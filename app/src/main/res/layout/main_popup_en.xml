@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="horizontal"
+    android:padding="10sp">
+
+    <androidx.appcompat.widget.AppCompatButton
+        android:id="@+id/station"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:background="@drawable/circle_button_sky"
+        android:text="station"
+        android:textSize="10sp"
+        android:layout_marginTop="3sp"
+        android:layout_marginBottom="3sp"
+        android:layout_marginRight="5sp"/>
+    <androidx.appcompat.widget.AppCompatButton
+        android:id="@+id/menu1"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:background="@drawable/circle_button_white"
+        android:text="from"
+        android:textSize="10sp"
+        android:layout_margin="3sp"/>
+    <androidx.appcompat.widget.AppCompatButton
+        android:id="@+id/menu2"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:background="@drawable/circle_button_white"
+        android:text="via"
+        android:textSize="10sp"
+        android:layout_margin="3sp"/>
+    <androidx.appcompat.widget.AppCompatButton
+        android:id="@+id/menu3"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:background="@drawable/circle_button_white"
+        android:text="to"
+        android:textSize="10sp"
+        android:layout_margin="3sp"/>
+
+</LinearLayout>
