@@ -1,83 +1,43 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:orientation="horizontal"
+    android:padding="10sp">
 
-    <androidx.constraintlayout.widget.ConstraintLayout
-        xmlns:android="http://schemas.android.com/apk/res/android"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        xmlns:app="http://schemas.android.com/apk/res-auto">
+    <androidx.appcompat.widget.AppCompatButton
+        android:id="@+id/station"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:background="@drawable/circle_button_sky"
+        android:text="역"
+        android:textSize="10sp"
+        android:layout_marginTop="3sp"
+        android:layout_marginBottom="3sp"
+        android:layout_marginRight="5sp"/>
+    <androidx.appcompat.widget.AppCompatButton
+        android:id="@+id/menu1"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:background="@drawable/circle_button_white"
+        android:text="출발"
+        android:textSize="10sp"
+        android:layout_margin="3sp"/>
+    <androidx.appcompat.widget.AppCompatButton
+        android:id="@+id/menu2"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:background="@drawable/circle_button_white"
+        android:text="경유"
+        android:textSize="10sp"
+        android:layout_margin="3sp"/>
+    <androidx.appcompat.widget.AppCompatButton
+        android:id="@+id/menu3"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:background="@drawable/circle_button_white"
+        android:text="도착"
+        android:textSize="10sp"
+        android:layout_margin="3sp"/>
 
-        <androidx.appcompat.widget.AppCompatButton
-            android:id="@+id/station"
-            android:layout_width="50dp"
-            android:layout_height="50dp"
-            android:background="@drawable/circle_button_sky"
-            android:text="역"
-            android:textSize="10sp"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintHorizontal_bias="0.498"
-            app:layout_constraintLeft_toLeftOf="parent"
-            app:layout_constraintRight_toRightOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.446" />
-
-        <androidx.appcompat.widget.AppCompatButton
-            android:id="@+id/menu0"
-            android:layout_width="50dp"
-            android:layout_height="50dp"
-            android:background="@drawable/circle_button_white"
-            android:text="취소"
-            android:textSize="13sp"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintHorizontal_bias="0.332"
-            app:layout_constraintLeft_toLeftOf="parent"
-            app:layout_constraintRight_toRightOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.446" />
-
-        <androidx.appcompat.widget.AppCompatButton
-            android:id="@+id/menu3"
-            android:layout_width="50dp"
-            android:layout_height="50dp"
-            android:background="@drawable/circle_button_white"
-            android:text="도착"
-            android:textSize="13sp"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintHorizontal_bias="0.664"
-            app:layout_constraintLeft_toLeftOf="parent"
-            app:layout_constraintRight_toRightOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.446" />
-
-        <androidx.appcompat.widget.AppCompatButton
-            android:id="@+id/menu2"
-            android:layout_width="50dp"
-            android:layout_height="50dp"
-            android:background="@drawable/circle_button_white"
-            android:text="경유"
-            android:textSize="13sp"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintHorizontal_bias="0.581"
-            app:layout_constraintLeft_toLeftOf="parent"
-            app:layout_constraintRight_toRightOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.531" />
-
-        <androidx.appcompat.widget.AppCompatButton
-            android:id="@+id/menu1"
-            android:layout_width="50dp"
-            android:layout_height="50dp"
-            android:background="@drawable/circle_button_white"
-            android:text="출발"
-            android:textSize="13sp"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintHorizontal_bias="0.418"
-            app:layout_constraintLeft_toLeftOf="parent"
-            app:layout_constraintRight_toRightOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.531" />
-
-    </androidx.constraintlayout.widget.ConstraintLayout>
 </LinearLayout>

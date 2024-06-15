@@ -3,13 +3,17 @@ package com.busanit.subway_project
 import DBHelper
 import android.annotation.SuppressLint
 import android.app.SearchManager
+import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
 import android.util.Log
 import android.view.Gravity
+import android.view.LayoutInflater
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
+import android.view.WindowManager
+import android.widget.LinearLayout
 import android.widget.PopupWindow
 import android.widget.TextView
 import android.widget.Toast
@@ -106,45 +110,64 @@ class MainActivity : AppCompatActivity() {
         toggleItem.setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS)
         return true
     }
-    // 역 클릭 팝업 메뉴 ( 출발, 경유, 도착 선택 ) 생성, 보여주는 메서드
+    // 역 이름 클릭 (출발, 경유, 도착) 선택 팝업 윈도우 띄우기
     private fun showPopup(v: View, title: String) {
-        // 한영 버전
-        var popupView = layoutInflater.inflate(R.layout.main_popup_kr, null)
-        if (isEng) {   // 영어 버전인 경우
-           popupView = layoutInflater.inflate(R.layout.main_popup_en, null)
+        // LayoutInflater를 사용하여 팝업 레이아웃 인플레이트
+        val inflater: LayoutInflater = getSystemService(LAYOUT_INFLATER_SERVICE) as LayoutInflater
+        // 한 영 버전 변환
+        var popupView = inflater.inflate(R.layout.main_popup_kr, null)
+        if (isEng) {
+            popupView = inflater.inflate(R.layout.main_popup_en, null)
         }
-        val popupWindow = PopupWindow(popupView,
+
+        // PopupWindow 생성
+        val popupWindow = PopupWindow(
+            popupView,
             ViewGroup.LayoutParams.WRAP_CONTENT,
-            ViewGroup.LayoutParams.WRAP_CONTENT)
+            ViewGroup.LayoutParams.WRAP_CONTENT,
+            true // Focusable
+        )
 
         // 역 이름 설정
         val stationTextView = popupView.findViewById<TextView>(R.id.station)
         stationTextView.text = title
 
         // 메뉴 아이템 클릭 이벤트 설정
-        popupView.findViewById<TextView>(R.id.menu0).setOnClickListener {
-            Toast.makeText(this, "취소!", Toast.LENGTH_SHORT).show()
-            popupWindow.dismiss()
-        }
-        popupView.findViewById<TextView>(R.id.menu1).setOnClickListener {
+        popupView.findViewById<View>(R.id.menu1).setOnClickListener {
             Toast.makeText(this, "출발!", Toast.LENGTH_SHORT).show()
             popupWindow.dismiss()
         }
-        popupView.findViewById<TextView>(R.id.menu2).setOnClickListener {
+        popupView.findViewById<View>(R.id.menu2).setOnClickListener {
             Toast.makeText(this, "경유!", Toast.LENGTH_SHORT).show()
             popupWindow.dismiss()
         }
-        popupView.findViewById<TextView>(R.id.menu3).setOnClickListener {
+        popupView.findViewById<View>(R.id.menu3).setOnClickListener {
             Toast.makeText(this, "도착!", Toast.LENGTH_SHORT).show()
             popupWindow.dismiss()
         }
 
-        // 팝업 창이 표시될 위치 설정
-        popupWindow.showAtLocation(v, Gravity.CENTER, 100, 100)
-        popupWindow.isOutsideTouchable = false
-        popupWindow.isFocusable = true
-    }
+        // PopupWindow의 배경을 투명하게 설정
+        popupWindow.setBackgroundDrawable(ColorDrawable())
+        // 배경을 어둡게 설정
+        popupWindow.setOnDismissListener {
+            setWindowBackgroundDim(false)
+        }
 
+        // PopupWindow의 배경을 설정하여 외부 클릭시 닫히도록 설정
+        popupWindow.setBackgroundDrawable(null)
+
+        // 팝업 창의 위치 설정
+        popupWindow.showAtLocation(v, Gravity.CENTER, 0, 0)
+        setWindowBackgroundDim(true) // 팝업을 표시할 때 배경을 어둡게 설정
+    }
+    // 배경 어둡게 설정 메서드
+    private fun setWindowBackgroundDim(dim: Boolean) {
+        val window = window
+        val layoutParams = window.attributes
+        layoutParams.alpha = if (dim) 0.5f else 1.0f
+        window.addFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND)
+        window.attributes = layoutParams
+    }
 
     // 역 클릭해서 역 이름 뜨는 알림 띄워보기
     private fun handleImageClick(abx: Int, aby: Int) {  // 클릭 이벤트로 가져온 절대좌표
