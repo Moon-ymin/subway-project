@@ -83,8 +83,28 @@ class MainActivity : AppCompatActivity() {
         // SearchView 검색 기능 구현
         searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
             override fun onQueryTextSubmit(query: String?): Boolean {
-                // 입력된 검색어 토스트 메시지로 띄우기
-                Toast.makeText(this@MainActivity, "검색어 : $query", Toast.LENGTH_SHORT).show()
+                // 입력된 검색어 query 은 sname -> station 테이블에서 scode 가져와서
+                // scode로 -> showPopup 메서드로 띄우기
+                var where: String = query.toString()
+                if (!query.toString().endsWith("역")){
+                    where = query.toString() + "역"
+                }
+                RetrofitClient.stationService.getStationBySname(where).enqueue(object : Callback<Station> {
+                    override fun onResponse(call: Call<Station>, response: Response<Station>) {
+                        if (response.isSuccessful) {
+                            val station = response.body()
+                            station?.let {
+                                showPopup(binding.photoView, it.scode.toString())
+                            }
+                        } else {
+                            Log.d("MainActivity", "Request failed: ${response.code()}")
+                        }
+                    }
+
+                    override fun onFailure(call: Call<Station>, t: Throwable) {
+                        Log.d("MainActivity", "Request failed: ${t.message}")
+                    }
+                })
                 return false
             }
 
@@ -131,9 +151,9 @@ class MainActivity : AppCompatActivity() {
 
         // 역 이름 설정 : title 은 scode -> station 테이블에서 sname 가져오기
         val stationTextView = popupView.findViewById<TextView>(R.id.station)
-
         // Retrofit을 통해 서버에서 데이터 가져오기
-        RetrofitClient.stationService.getStationById(title.toLong()).enqueue(object : Callback<Station> {
+        RetrofitClient.stationService.getStationByScode(title.toInt()).enqueue(object : Callback<Station> {
+
             override fun onResponse(call: Call<Station>, response: Response<Station>) {
                 if (response.isSuccessful) {
                     val station = response.body()
@@ -143,7 +163,7 @@ class MainActivity : AppCompatActivity() {
                         Log.d("MainActivity", "Station name: $name")
                     }
                 } else {
-                    Log.e("MainActivity", "Request failed: ${response.code()}")
+                    Log.d("MainActivity", "Request failed: ${response.code()}")
                 }
             }
 
@@ -181,7 +201,8 @@ class MainActivity : AppCompatActivity() {
         popupWindow.showAtLocation(v, Gravity.CENTER, 0, 0)
         setWindowBackgroundDim(true) // 팝업을 표시할 때 배경을 어둡게 설정
     }
-    // 배경 어둡게 설정 메서드
+
+    // 배경 어둡게 설정하는 메서드
     private fun setWindowBackgroundDim(dim: Boolean) {
         val window = window
         val layoutParams = window.attributes
