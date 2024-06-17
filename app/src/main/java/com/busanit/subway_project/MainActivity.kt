@@ -131,9 +131,9 @@ class MainActivity : AppCompatActivity() {
 
         // 역 이름 설정 : title 은 scode -> station 테이블에서 sname 가져오기
         val stationTextView = popupView.findViewById<TextView>(R.id.station)
-
         // Retrofit을 통해 서버에서 데이터 가져오기
-        RetrofitClient.stationService.getStationById(title.toLong()).enqueue(object : Callback<Station> {
+        RetrofitClient.stationService.getStationById(title.toInt()).enqueue(object : Callback<Station> {
+
             override fun onResponse(call: Call<Station>, response: Response<Station>) {
                 if (response.isSuccessful) {
                     val station = response.body()
@@ -143,7 +143,7 @@ class MainActivity : AppCompatActivity() {
                         Log.d("MainActivity", "Station name: $name")
                     }
                 } else {
-                    Log.e("MainActivity", "Request failed: ${response.code()}")
+                    Log.d("MainActivity", "Request failed: ${response.code()}")
                 }
             }
 

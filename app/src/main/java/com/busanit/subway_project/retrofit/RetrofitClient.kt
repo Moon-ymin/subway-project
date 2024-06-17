@@ -5,7 +5,8 @@ import retrofit2.converter.gson.GsonConverterFactory
 
 object RetrofitClient {
 
-    private const val BASE_URL = "http://192.168.45.165:8080/"
+    // private const val BASE_URL = "http://192.168.45.165:8080/" // 영민 집에서 테스트 할 때
+    private const val BASE_URL = "http://10.100.203.36:8080/" // 영민 학원에서 테스트 할 떄
 
     val stationService: StationAPIService by lazy {
         // Retrofit 객체 생성
@@ -16,5 +17,13 @@ object RetrofitClient {
 
         // API 인터페이스를 레트로핏을 사용하여 구현
         retrofit.create(StationAPIService::class.java)
+    }
+    val lineService: LineAPIService by lazy {
+        val retrofit = Retrofit.Builder()
+            .baseUrl(BASE_URL)
+            .addConverterFactory(GsonConverterFactory.create())
+            .build()
+
+        retrofit.create(LineAPIService::class.java)
     }
 }
