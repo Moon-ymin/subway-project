@@ -1,5 +1,6 @@
 package com.busanit.subway_project.fragment
 
+import android.app.TimePickerDialog
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -8,6 +9,7 @@ import androidx.fragment.app.Fragment
 import com.busanit.subway_project.R
 import com.busanit.subway_project.databinding.ActivityRouteCheckBinding
 import com.busanit.subway_project.databinding.FragmentMinimumTransferBinding
+import java.util.Calendar
 
 class MinimumTransferFragment : Fragment() {
 
@@ -28,7 +30,34 @@ class MinimumTransferFragment : Fragment() {
 
         super.onViewCreated(view, savedInstanceState)
 
-        setTextView()
+//      "00분 소요" 텍스트 뷰
+        val time = calculateTime()
+        binding.timeInfoTextView1.text = "${time}분"
+        binding.timeInfoTextView2.text = "${time}분 소요"
+
+//      "00개 역 이동" 텍스트 뷰
+        val stations = calculateTotalStations()
+        binding.totalStationTextView.text = "${stations}개 역 이동"
+
+//      시간 설정 버튼 → 사용자가 직접 시간 설정
+        binding.setTime.setOnClickListener {
+
+            val calendar = Calendar.getInstance()
+            val hour = calendar.get(Calendar.HOUR_OF_DAY)
+            val minute = calendar.get(Calendar.MINUTE)
+
+            val timePickerDialog = TimePickerDialog(
+                requireContext(),
+                { _, selectedHour, selectedMinute ->
+                    val selectedTime = String.format("%02d:%02d", selectedHour, selectedMinute)
+                    binding.setTime.text = "출발 $selectedTime"
+                },
+                hour,
+                minute,
+                true
+            )
+            timePickerDialog.show()
+        }
     }
 
     private fun calculateTime(): Int {
@@ -37,14 +66,5 @@ class MinimumTransferFragment : Fragment() {
 
     private fun calculateTotalStations(): Int {
         return 4;
-    }
-
-    private fun setTextView() {
-
-        val time = calculateTime()
-        binding.timeInfoTextView.text = "${time}분"
-
-        val stations = calculateTotalStations()
-        binding.totalStationTextView.text = "${stations}개 역 이동"
     }
 }
