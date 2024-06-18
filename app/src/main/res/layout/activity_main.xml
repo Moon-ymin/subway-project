@@ -14,6 +14,7 @@
         android:theme="@style/ThemeOverlay.AppCompat.ActionBar"
         android:visibility="visible" />
 
+
     <androidx.cardview.widget.CardView
         android:id="@+id/cardView"
         android:layout_width="wrap_content"
@@ -39,10 +40,11 @@
                 android:padding="7dp">
 
                 <TextView
+                    android:id="@+id/from"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center"
-                    android:text="  출발  "
+                    android:text="@string/from"
                     android:textColor="#A5A4A4"
                     android:textSize="13sp"
                     android:textStyle="bold" />
@@ -50,14 +52,15 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center"
-                    android:text=" → "
+                    android:text="    →    "
                     android:textColor="@color/black"
                     android:textSize="13sp"
                     android:textStyle="bold" />
                 <TextView
+                    android:id="@+id/via"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="  경유  "
+                    android:text="@string/via"
                     android:textColor="#A5A4A4"
                     android:textSize="13sp"
                     android:textStyle="bold"
@@ -66,15 +69,16 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center"
-                    android:text=" → "
+                    android:text="    →    "
                     android:textColor="@color/black"
                     android:textSize="13sp"
                     android:textStyle="bold" />
                 <TextView
+                    android:id="@+id/to"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center"
-                    android:text="  도착  "
+                    android:text="@string/to"
                     android:textColor="#A5A4A4"
                     android:textSize="13sp"
                     android:textStyle="bold" />
@@ -87,7 +91,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="30dp"
                 android:layout_gravity="center"
-                android:text="경로 찾기"
+                android:text="@string/locaButton"
                 android:textColor="@color/white"
                 android:background="@drawable/button_rounded_background" />
         </LinearLayout>

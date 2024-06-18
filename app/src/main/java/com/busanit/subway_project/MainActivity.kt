@@ -21,13 +21,18 @@ import androidx.appcompat.widget.SearchView
 import androidx.appcompat.widget.Toolbar
 import androidx.core.content.ContextCompat
 import com.busanit.subway_project.databinding.ActivityMainBinding
+import com.busanit.subway_project.model.LocationData
 import com.busanit.subway_project.model.Station
+import com.busanit.subway_project.retrofit.ApiService
 import com.busanit.subway_project.retrofit.RetrofitClient
 import com.github.angads25.toggle.widget.LabeledSwitch
 import com.github.chrisbanes.photoview.PhotoView
+import okhttp3.ResponseBody
 import retrofit2.Callback
 import retrofit2.Call
 import retrofit2.Response
+import retrofit2.Retrofit
+import retrofit2.converter.gson.GsonConverterFactory
 
 class MainActivity : AppCompatActivity() {
 
@@ -35,6 +40,14 @@ class MainActivity : AppCompatActivity() {
     private lateinit var binding: ActivityMainBinding
     private lateinit var dbHelper: DBHelper
     private var isEng = false   // 한 영 버전 여부 플래그
+    private lateinit var locabutton: Button
+    private lateinit var apiService: ApiService // Retrofit 인터페이스를 사용할 변수
+
+
+    // 출발, 경유, 도착 (scode) 설정
+    private var from = 0
+    private var via = 0
+    private var to = 0
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -50,11 +63,26 @@ class MainActivity : AppCompatActivity() {
         // HTML 파일에서 데이터 읽기
         dbHelper = DBHelper(this)
 
+        // Retrofit
+        val retrofit = Retrofit.Builder()
+            .baseUrl("http://10.100.203.36:8080/")
+            .addConverterFactory(GsonConverterFactory.create())
+            .build()
+        apiService = retrofit.create(ApiService::class.java)
+
         // 경로 뷰
-        val buttonClose = findViewById<Button>(R.id.locaButton)
+        locabutton = binding.locaButton
         // 클릭 리스너 설정
-        buttonClose.setOnClickListener {
-            Toast.makeText(this, "경로를 찾습니다!", Toast.LENGTH_SHORT).show()
+        locabutton.setOnClickListener {
+            // Toast.makeText(this, "경로를 찾습니다!", Toast.LENGTH_SHORT).show()
+            if (from == 0) {
+                Toast.makeText(this@MainActivity, "출발지를 선택해주세요", Toast.LENGTH_SHORT).show()
+            } else if (to == 0){
+                Toast.makeText(this@MainActivity, "도착지를 선택해주세요", Toast.LENGTH_SHORT).show()
+            } else {
+                // Toast.makeText(this@MainActivity, "경로 찾기!", Toast.LENGTH_SHORT).show()
+                sendLocationDataToServer(from, via, to)
+            }
         }
 
         // 클릭 이벤트 처리 : 메인 화면 속 역 클릭하면 -> 팝업 메뉴 뜨게
@@ -132,10 +160,13 @@ class MainActivity : AppCompatActivity() {
             if (isOn) {
                 isEng = true
                 photoView.setImageResource(R.drawable.busan_metro_eng)
+
             } else {
                 isEng = false
                 photoView.setImageResource(R.drawable.busan_metro_kor)
             }
+            if (isEng) { locabutton.text = "Find location" }
+            else { locabutton.text = "경로 찾기" }
         }
         toggleItem.setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS)
         return true
@@ -160,6 +191,7 @@ class MainActivity : AppCompatActivity() {
 
         // 역 이름 설정 : title 은 scode -> station 테이블에서 sname 가져오기
         val stationTextView = popupView.findViewById<TextView>(R.id.station)
+        var name: String = "역"
         // Retrofit을 통해 서버에서 데이터 가져오기
         RetrofitClient.stationService.getStationByScode(title.toInt()).enqueue(object : Callback<Station> {
 
@@ -167,7 +199,7 @@ class MainActivity : AppCompatActivity() {
                 if (response.isSuccessful) {
                     val station = response.body()
                     station?.let {
-                        val name = it.sname
+                        name = it.sname
                         stationTextView.text = name  // TextView에 sname 설정
                         Log.d("MainActivity", "Station name: $name")
                     }
@@ -181,18 +213,26 @@ class MainActivity : AppCompatActivity() {
             }
         })
 
-
         // 메뉴 아이템 클릭 이벤트 설정
         popupView.findViewById<View>(R.id.menu1).setOnClickListener {
-            Toast.makeText(this, "출발!", Toast.LENGTH_SHORT).show()
+            // Toast.makeText(this, "출발!", Toast.LENGTH_SHORT).show()
+            binding.from.text = name
+            from = title.toInt()
+            binding.from.setTextColor(ContextCompat.getColor(this, R.color.black))
             popupWindow.dismiss()
         }
         popupView.findViewById<View>(R.id.menu2).setOnClickListener {
-            Toast.makeText(this, "경유!", Toast.LENGTH_SHORT).show()
+            // Toast.makeText(this, "경유!", Toast.LENGTH_SHORT).show()
+            binding.via.text = name
+            via= title.toInt()
+            binding.via.setTextColor(ContextCompat.getColor(this, R.color.black))
             popupWindow.dismiss()
         }
         popupView.findViewById<View>(R.id.menu3).setOnClickListener {
-            Toast.makeText(this, "도착!", Toast.LENGTH_SHORT).show()
+            // Toast.makeText(this, "도착!", Toast.LENGTH_SHORT).show()
+            binding.to.text = name
+            to = title.toInt()
+            binding.to.setTextColor(ContextCompat.getColor(this, R.color.black))
             popupWindow.dismiss()
         }
 
@@ -257,5 +297,30 @@ class MainActivity : AppCompatActivity() {
                 Toast.makeText(this, "No station found at ($abx, $aby)", Toast.LENGTH_SHORT).show()
             }
         }
+    }
+
+    // 출발, 경유, 도착 정보를 서버에 전송하는 메서드
+    private fun sendLocationDataToServer(from: Int, via: Int, to: Int){
+        // 서버에 전송할 데이터 객체 생성
+        val locationData = LocationData(from, via, to)
+
+        // Retrofit 을 통해 서버에 POST 요청 보내기
+        apiService.sendLocationData(locationData).enqueue(object : Callback<ResponseBody> {
+            override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
+                if (response.isSuccessful) {
+                    Toast.makeText(this@MainActivity, "데이터 전송 성공!", Toast.LENGTH_SHORT).show()
+                    // 서버 응답 처리
+                } else {
+                    Toast.makeText(this@MainActivity, "데이터 전송 실패", Toast.LENGTH_SHORT).show()
+                    // 실패 처리 로직
+                }
+            }
+
+            override fun onFailure(call: Call<ResponseBody>, t: Throwable) {
+                Toast.makeText(this@MainActivity, "네트워크 오류 발생", Toast.LENGTH_SHORT).show()
+                // 네트워크 오류 처리 로직
+            }
+
+        })
     }
 }
