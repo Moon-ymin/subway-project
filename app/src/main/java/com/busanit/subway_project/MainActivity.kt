@@ -12,12 +12,14 @@ import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
 import android.view.WindowManager
+import android.widget.Button
 import android.widget.PopupWindow
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.SearchView
 import androidx.appcompat.widget.Toolbar
+import androidx.core.content.ContextCompat
 import com.busanit.subway_project.databinding.ActivityMainBinding
 import com.busanit.subway_project.model.Station
 import com.busanit.subway_project.retrofit.RetrofitClient
@@ -47,6 +49,13 @@ class MainActivity : AppCompatActivity() {
 
         // HTML 파일에서 데이터 읽기
         dbHelper = DBHelper(this)
+
+        // 경로 뷰
+        val buttonClose = findViewById<Button>(R.id.locaButton)
+        // 클릭 리스너 설정
+        buttonClose.setOnClickListener {
+            Toast.makeText(this, "경로를 찾습니다!", Toast.LENGTH_SHORT).show()
+        }
 
         // 클릭 이벤트 처리 : 메인 화면 속 역 클릭하면 -> 팝업 메뉴 뜨게
         photoView.setOnPhotoTapListener { view, x, y ->
