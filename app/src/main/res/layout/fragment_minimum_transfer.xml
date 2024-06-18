@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+<!-- 최소 환승 -->
+    <LinearLayout
+        android:layout_height="wrap_content"
+        android:layout_width="wrap_content"
+        android:orientation="horizontal">
+
+        <TextView
+            android:id="@+id/timeInfoTextView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:fontFamily="@font/gmarketsansmedium"
+            android:layout_margin="20dp"
+            android:textSize="35sp"/>
+
+        <TextView
+            android:id="@+id/totalStationTextView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:fontFamily="@font/gmarketsansmedium"
+            android:layout_margin="20dp"
+            android:textSize="20sp"/>
+
+    </LinearLayout>
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/black"
+        />
+    
+    <TextView
+        android:id="@+id/startStation"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:hint="출발역"
+        android:layout_marginTop="16dp"
+        android:layout_marginStart="16dp"/>
+
+    <EditText
+        android:id="@+id/endStation"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:hint="도착역"
+        android:layout_marginTop="16dp"
+        android:layout_marginStart="16dp"/>
+
+    <Button
+        android:id="@+id/findRouteButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="경로 찾기"
+        android:layout_marginTop="16dp"
+        android:layout_marginStart="16dp"/>
+
+    <ImageButton
+        android:id="@+id/notificationButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:layout_marginStart="16dp"
+        android:contentDescription="알림 설정"/>
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/routeRecyclerView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:visibility="gone"/>
+
+    <ToggleButton
+        android:id="@+id/toggleStationsButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textOn="경유역 숨기기"
+        android:textOff="경유역 보기"
+        android:layout_marginTop="16dp"
+        android:layout_marginStart="16dp"/>
+
+</LinearLayout>

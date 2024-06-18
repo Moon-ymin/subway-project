@@ -59,10 +59,10 @@ class MainActivity : AppCompatActivity() {
                 val absoluteX = (x * imageWidth).toInt()
                 val absoluteY = (y * imageHeight).toInt()
 
-                /*// 변환된 절대 좌표 출력
+                /* 변환된 절대 좌표 출력
                 Log.d("MainActivity", "Relative coordinates: ($x, $y)")
                 Log.d("MainActivity", "Absolute coordinates: ($absoluteX, $absoluteY)")
-*/
+                */
                 // 이후 처리 로직 구현
                 handleImageClick(absoluteX, absoluteY)
             }
@@ -229,7 +229,7 @@ class MainActivity : AppCompatActivity() {
                     val y1 = cursor.getFloat(cursor.getColumnIndexOrThrow(DBHelper.COLUMN_Y1)).toInt()
                     val x2 = cursor.getFloat(cursor.getColumnIndexOrThrow(DBHelper.COLUMN_X2)).toInt()
                     val y2 = cursor.getFloat(cursor.getColumnIndexOrThrow(DBHelper.COLUMN_Y2)).toInt()
-                    //Log.d("MainActivity", "db Click: ($title : $x1, $y1, $x2, $y2)")
+                    // Log.d("MainActivity", "db Click: ($title : $x1, $y1, $x2, $y2)")
 
                     // 클릭한 좌표가 DB에 저장된 좌표 범위 안에 있는지 확인
                     if (abx in x1..x2 && aby in y1..y2) {
