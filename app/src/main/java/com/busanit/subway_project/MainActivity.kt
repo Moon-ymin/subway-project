@@ -243,7 +243,7 @@ class MainActivity : AppCompatActivity() {
             setWindowBackgroundDim(false)
         }
 
-        // PopupWindow의 배경을 설정하여 외부 클릭시 닫히도록 설정
+        // PopupWindow의 배경을 설정하여 외부 클릭 시 닫히도록 설정
         popupWindow.setBackgroundDrawable(null)
 
         // 팝업 창의 위치 설정
@@ -283,7 +283,7 @@ class MainActivity : AppCompatActivity() {
                     // 클릭한 좌표가 DB에 저장된 좌표 범위 안에 있는지 확인
                     if (abx in x1..x2 && aby in y1..y2) {
                         // 역 이름 뜨는지 확인
-                        //Toast.makeText(this, "Station: $title", Toast.LENGTH_SHORT).show()
+                        // Toast.makeText(this, "Station: $title", Toast.LENGTH_SHORT).show()
                         foundStation = true
                         showPopup(binding.photoView, title)
                         break
@@ -303,7 +303,7 @@ class MainActivity : AppCompatActivity() {
     private fun sendLocationDataToServer(from: Int, via: Int, to: Int){
         // 서버에 전송할 데이터 객체 생성
         val locationData = LocationData(from, via, to)
-        //Log.e("MainActivity", "Request data: $from, $via, $to ")
+        // Log.e("MainActivity", "Request data: $from, $via, $to ")
 
         // Retrofit 을 통해 서버에 POST 요청 보내기
         apiService.sendLocationData(locationData).enqueue(object : Callback<ResponseBody> {
@@ -322,7 +322,6 @@ class MainActivity : AppCompatActivity() {
                 Log.e("MainActivity", "Request failed: ${t.message}")
                 // 네트워크 오류 처리 로직
             }
-
         })
     }
 }

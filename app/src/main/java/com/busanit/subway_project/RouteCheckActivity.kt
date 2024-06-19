@@ -30,6 +30,7 @@ class RouteCheckActivity : AppCompatActivity() {
         val adapter = RoutePagerAdapter.RoutePagerAdapter(this)
         viewPager.adapter = adapter
 
+        // 최단시간 | 최소환승 탭 구현
         TabLayoutMediator(tabLayout, viewPager) { tab, position ->
             tab.text = when (position) {
                 0 -> "최단시간"
@@ -43,6 +44,7 @@ class RouteCheckActivity : AppCompatActivity() {
         }
     }
 
+    // 상단바 구현
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
         menuInflater.inflate(R.menu.main_search, menu)
 

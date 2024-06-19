@@ -11,9 +11,9 @@
         android:bottomLeftRadius="20dp"/>
 
     <stroke
-        android:color="#000000"
+        android:color="#616161"
         android:width="2dp"
-        android:dashWidth="5dp"
+        android:dashWidth="3dp"
         android:dashGap="5dp"/>
 
 </shape>
