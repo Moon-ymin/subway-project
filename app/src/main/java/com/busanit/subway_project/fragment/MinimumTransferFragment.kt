@@ -1,7 +1,5 @@
 package com.busanit.subway_project.fragment
 
-import android.app.AlarmManager
-import android.app.PendingIntent
 import android.app.TimePickerDialog
 import android.os.Bundle
 import android.os.CountDownTimer
@@ -26,11 +24,6 @@ class MinimumTransferFragment : Fragment() {
 
     // 타이머 관련
     private var timer: CountDownTimer? = null
-
-    // 알람 관련
-    private val ALARM_REQUEST_CODE = 123
-    private lateinit var alarmManager: AlarmManager
-    private lateinit var alarmIntent: PendingIntent
 
     override fun onCreateView(
 
