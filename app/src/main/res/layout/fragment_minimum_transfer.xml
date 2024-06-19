@@ -47,7 +47,7 @@
         android:layout_margin="5dp"
         android:backgroundTint="#000000"
         android:fontFamily="@font/pretendardmedium"
-        android:text="출발 시간 설정" />
+        android:text="출발 시간 설정 &#x1f4cc;" />
 
     <!-- 알람 버튼 설정 -->
     <Button
@@ -71,9 +71,8 @@
             android:id="@+id/lineView"
             android:layout_width="12dp"
             android:layout_height="match_parent"
-            android:layout_gravity="center"
             android:background="@drawable/line"
-            android:layerType="software" />
+            android:layerType="software"/>
 
         <LinearLayout
             android:layout_width="0dp"
@@ -121,5 +120,11 @@
         </LinearLayout>
 
     </LinearLayout>
+
+    <ImageView
+        android:layout_width="wrap_content"
+        android:layout_height="30dp"
+        android:src="@drawable/train"
+        android:paddingStart="7.4dp"/>
 
 </LinearLayout>
