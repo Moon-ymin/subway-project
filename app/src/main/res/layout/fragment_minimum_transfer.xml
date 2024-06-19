@@ -2,9 +2,14 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical">
+    xmlns:tools="http://schemas.android.com/tools"
+    android:orientation="vertical"
+    android:background="@color/white"
+    tools:context=".RouteCheckActivity">
 
 <!-- 최소 환승 -->
+
+    <!-- 00분 소요 및 00개 역 이동 화면 -->
     <LinearLayout
         android:layout_height="wrap_content"
         android:layout_width="wrap_content"
@@ -32,6 +37,7 @@
 
     </LinearLayout>
 
+    <!-- 버튼 위 검은색 배경 → 00분 소요 한 번 더 안내 -->
     <TextView
         android:id="@+id/timeInfoTextView2"
         android:layout_width="match_parent"
@@ -44,6 +50,7 @@
         android:gravity="center"
         android:layout_margin="5dp"/>
 
+    <!-- 사용자 직접 시간 설정 버튼 -->
     <Button
         android:id="@+id/setTime"
         android:layout_width="match_parent"
@@ -52,13 +59,70 @@
         android:layout_margin="5dp"
         android:text="시간을 설정해 주세요!"
         android:fontFamily="@font/pretendardmedium"/>
-    
+
+    <!-- 출발역 | 이동역 | 도착역 안내 화면 -->
     <LinearLayout
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:paddingTop="20dp"
+        android:paddingStart="30dp">
 
+        <View
+            android:id="@+id/lineView"
+            android:layout_width="15dp"
+            android:layout_height="match_parent"
+            android:background="@drawable/line"/>
 
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:orientation="vertical"
+            android:paddingStart="15dp">
+
+            <TextView
+                android:id="@+id/startStationTextView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textAppearance="?attr/textAppearanceListItem"
+                android:fontFamily="@font/pretendardmedium"/>
+
+            <ToggleButton
+                android:id="@+id/toggleButton"
+                android:layout_width="300dp"
+                android:layout_height="wrap_content"
+                android:textOff="▶ 경유역 확인!"
+                android:textOn="■ 경유역 숨기기"
+                android:fontFamily="@font/pretendardmedium"
+                android:background="@drawable/toggle"
+                android:textColor="@color/black"/>
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/recyclerViewStations"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="1"
+                android:padding="16dp"/>
+
+            <TextView
+                android:id="@+id/endStationText"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textAppearance="?attr/textAppearanceListItem"
+                android:fontFamily="@font/pretendardmedium"/>
+
+        </LinearLayout>
+
+        <ImageButton
+            android:id="@+id/buttonAlarm"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/alarm"
+            android:background="?attr/selectableItemBackground"
+            android:visibility="gone"/>
 
     </LinearLayout>
+
 
 </LinearLayout>
