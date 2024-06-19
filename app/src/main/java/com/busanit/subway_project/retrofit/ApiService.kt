@@ -8,6 +8,6 @@ import retrofit2.http.POST
 
 interface ApiService {
 
-    @POST("http://10.100.203.36:8080/")
+    @POST("api/location")   // 상대 경로만 지정
     fun sendLocationData(@Body requestData: LocationData): Call<ResponseBody>
 }
