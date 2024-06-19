@@ -65,7 +65,7 @@ class MainActivity : AppCompatActivity() {
 
         // Retrofit
         val retrofit = Retrofit.Builder()
-            .baseUrl("http://10.100.203.36:8080/")
+            .baseUrl("http://10.100.203.36:8080/")  // 절대 경로만 지정
             .addConverterFactory(GsonConverterFactory.create())
             .build()
         apiService = retrofit.create(ApiService::class.java)
@@ -303,6 +303,7 @@ class MainActivity : AppCompatActivity() {
     private fun sendLocationDataToServer(from: Int, via: Int, to: Int){
         // 서버에 전송할 데이터 객체 생성
         val locationData = LocationData(from, via, to)
+        //Log.e("MainActivity", "Request data: $from, $via, $to ")
 
         // Retrofit 을 통해 서버에 POST 요청 보내기
         apiService.sendLocationData(locationData).enqueue(object : Callback<ResponseBody> {
@@ -318,6 +319,7 @@ class MainActivity : AppCompatActivity() {
 
             override fun onFailure(call: Call<ResponseBody>, t: Throwable) {
                 Toast.makeText(this@MainActivity, "네트워크 오류 발생", Toast.LENGTH_SHORT).show()
+                Log.e("MainActivity", "Request failed: ${t.message}")
                 // 네트워크 오류 처리 로직
             }
 
