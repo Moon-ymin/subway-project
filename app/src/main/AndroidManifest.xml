@@ -2,9 +2,15 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools">
     <!-- 인터넷 권한 추가 -->
-    <uses-permission android:name="android.permission.INTERNET" /> <!-- 네트워크 상태 (연결 여부, 연결 유형 등) 확인 -->
-    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" /> <!-- wifi 상태 (wifi 연결 여부, 연결된 wifi 네트워크의 정보 등) 확인 가능 -->
+    <!-- 네트워크 상태 (연결 여부, 연결 유형 등) 확인 -->
+    <uses-permission android:name="android.permission.INTERNET" />
+
+    <!-- wifi 상태 (wifi 연결 여부, 연결된 wifi 네트워크의 정보 등) 확인 가능 -->
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
+
+    <!-- 알람 설정 권한 -->
+    <uses-permission android:name="android.permission.POST_NOTIFICATIONS"/>
 
     <application
         android:allowBackup="true"
@@ -17,6 +23,7 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.Subwayproject"
         tools:targetApi="31">
+
         <activity
             android:name=".RouteCheckActivity"
             android:exported="true">
@@ -35,6 +42,9 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
+        <receiver android:name=".alarm.AlarmReceiver"/>
+
     </application>
 
 </manifest>
