@@ -22,6 +22,7 @@ import com.busanit.subway_project.R
 import com.busanit.subway_project.adapter.StationAdapter
 import com.busanit.subway_project.alarm.AlarmReceiver
 import com.busanit.subway_project.databinding.FragmentMinimumTransferBinding
+import com.busanit.subway_project.isEng
 import com.busanit.subway_project.model.Line
 import com.busanit.subway_project.model.Station
 import java.sql.Time
@@ -55,13 +56,24 @@ class MinimumTransferFragment : Fragment() {
 
         // "00분 소요" 텍스트 뷰
         val time = calculateTime()
-        binding.timeInfoTextView1.text = "${time}분"
+        if (isEng) {
+            binding.timeInfoTextView1.text = "${time}min"
+        } else {
+            binding.timeInfoTextView1.text = "${time}분"
+        }
 
         // "00개 역 이동" 텍스트 뷰
         val stations = calculateTotalStations()
-        binding.totalStationTextView.text = "${stations}개 역 이동"
+        if (isEng) {
+            binding.totalStationTextView.text = "Travel ${stations} stations"
+        } else {
+            binding.totalStationTextView.text = "${stations}개 역 이동"
+        }
 
         // 시간 설정 버튼 → 사용자가 직접 시간 설정
+        if (isEng) {
+            binding.setTime.text = "Set Departure Time"
+        }
         binding.setTime.setOnClickListener {
 
             val calendar = Calendar.getInstance()
@@ -72,7 +84,12 @@ class MinimumTransferFragment : Fragment() {
                 requireContext(),
                 { _, selectedHour, selectedMinute ->
                     val selectedTime = String.format("%02d : %02d", selectedHour, selectedMinute)
-                    binding.setTime.text = "출발 $selectedTime"
+
+                    if (isEng) {
+                        binding.setTime.text = "Departure Time : ${selectedTime}"
+                    } else {
+                        binding.setTime.text = "출발 시간 : ${selectedTime}"
+                    }
                 },
                 hour,
                 minute,
@@ -82,6 +99,9 @@ class MinimumTransferFragment : Fragment() {
         }
 
         // 타이머 설정 버튼
+        if (isEng) {
+            binding.setTimer.text = "Set Timer"
+        }
         binding.setTimer.setOnClickListener {
 
             timer?.cancel() // 기존 타이머가 있다면 취소
@@ -108,10 +128,7 @@ class MinimumTransferFragment : Fragment() {
                 override fun onFinish() {
                     setAlarm()
 
-                    // 타이머 종료 시 호출
-                    binding.setTimer.text = "타이머 종료"
-
-                    // 여기에 타이머가 종료된 후
+                    // 타이머가 종료된 후
                     timer?.cancel()
                 }
             }
@@ -120,6 +137,7 @@ class MinimumTransferFragment : Fragment() {
             (timer as CountDownTimer).start()
             }
 
+        // 리사이클러 뷰
         setUpRecyclerView()
     }
 
@@ -128,7 +146,7 @@ class MinimumTransferFragment : Fragment() {
         return 6;
     }
 
-    // 총 경유 역 개수 계산 메서드
+    // 중간역 총 개수 계산 메서드
     private fun calculateTotalStations(): Int {
         return 4;
     }
@@ -142,13 +160,16 @@ class MinimumTransferFragment : Fragment() {
             Station(102, "경성대부경대역", Line(3, "1호선"), 0),
             Station(103, "대연역", Line(4, "1호선"), 0),
             Station(104, "못골역", Line(8, "2호선"), 0),
-            Station(105, "지게골역", Line(9, "2호선"), 0),
-            Station(105, "지게골역", Line(9, "2호선"), 0),
-            Station(105, "지게골역", Line(9, "2호선"), 0),
-            Station(105, "지게골역", Line(9, "2호선"), 0),
-            Station(105, "지게골역", Line(9, "2호선"), 0),
             Station(105, "지게골역", Line(9, "2호선"), 0)
         )
+
+        // 영어 설정
+        if (isEng) {
+            binding.fastestTrainIs.text = "The fastest subway time is   "
+            binding.transitStnToggleBnt.textOff = "▶ SHOW TRANSIT STATIONS"
+            binding.transitStnToggleBnt.textOn = "■ HIDE TRANSIT STATIONS"
+            binding.arrivedTimeIs.text = "The estimated arrival time is   "
+        }
 
         // 출발역 설정
         binding.startStationTextView.text = allStations.first().sname
@@ -194,7 +215,7 @@ class MinimumTransferFragment : Fragment() {
         binding.recyclerViewStations.adapter = adapter
 
         // 토글 버튼 클릭 시
-        binding.toggleButton.setOnCheckedChangeListener { _, isChecked ->
+        binding.transitStnToggleBnt.setOnCheckedChangeListener { _, isChecked ->
 
             if (isChecked) {
                 // 중간 역 보이기
@@ -243,6 +264,7 @@ class MinimumTransferFragment : Fragment() {
         binding.endTimeTextView.text = endTime
     }
 
+    // 운행 시간 안내 메서드
     private fun setTime(time: String): String {
 
         val parts = time.split(":")
@@ -251,7 +273,6 @@ class MinimumTransferFragment : Fragment() {
         val minutes = parts[1].toInt()
         val seconds = parts[2].toInt()
 
-        // 분:초 형식으로 포맷팅
         val timeText = String.format("%02d : %02d", hours, minutes)
 
         return timeText

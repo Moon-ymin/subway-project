@@ -34,12 +34,23 @@ class RouteCheckActivity : AppCompatActivity() {
         // 최단시간 | 최소환승 탭 구현
         TabLayoutMediator(tabLayout, viewPager) { tab, position ->
             tab.text = when (position) {
-                0 -> "최단시간"
-                1 -> "최소환승"
+                0 -> {
+                    if (isEng) {
+                        "Fastest"
+                    } else {
+                        "최단시간"
+                    }
+                }
+                1 -> if (isEng) {
+                    "Minimum"
+                } else {
+                    "최소환승"
+                }
                 else -> null
             }
         }.attach()
 
+        // "메인으로 돌아가기" 클릭 시 해당 액티비티를 종료하고 메인으로 이동(이전으로 이동)
         backToMainButton.setOnClickListener {
             finish()
         }

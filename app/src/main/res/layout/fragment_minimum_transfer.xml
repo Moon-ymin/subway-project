@@ -31,9 +31,9 @@
                     android:layout_marginLeft="20dp"
                     android:layout_marginTop="15dp"
                     android:layout_marginBottom="10dp"
-                    android:fontFamily="@font/pretendardmedium"
                     android:textSize="35sp"
-                    android:textColor="@color/black"/>
+                    android:textColor="@color/black"
+                    android:fontFamily="@font/pretendardmedium"/>
 
                 <TextView
                     android:id="@+id/totalStationTextView"
@@ -42,9 +42,9 @@
                     android:layout_marginLeft="10dp"
                     android:layout_marginTop="15dp"
                     android:layout_marginBottom="10dp"
-                    android:fontFamily="@font/pretendardmedium"
                     android:textSize="20sp"
-                    android:textColor="#373737"/>
+                    android:textColor="#373737"
+                    android:fontFamily="@font/pretendardmedium"/>
             </LinearLayout>
 
             <!-- 사용자 직접 시간 설정 버튼 -->
@@ -54,8 +54,8 @@
                 android:layout_height="wrap_content"
                 android:layout_margin="5dp"
                 android:backgroundTint="#000000"
-                android:fontFamily="@font/pretendardmedium"
-                android:text="출발 시간 설정 &#x1f4cc;"/>
+                android:text="출발 시간 설정 &#x1f4cc;"
+                android:fontFamily="@font/pretendardmedium"/>
 
             <!-- 타이머 버튼 설정 -->
             <Button
@@ -64,8 +64,8 @@
                 android:layout_height="wrap_content"
                 android:layout_margin="5dp"
                 android:backgroundTint="#FF9800"
-                android:fontFamily="@font/pretendardmedium"
-                android:text="타이머 설정 &#x1f552;"/>
+                android:text="타이머 설정 &#x1f552;"
+                android:fontFamily="@font/pretendardmedium"/>
 
             <!-- 출발역 | 이동역 | 도착역 안내 화면 -->
             <LinearLayout
@@ -105,10 +105,10 @@
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
                             android:layout_weight="1"
-                            android:fontFamily="@font/pretendardmedium"
                             android:textAppearance="?attr/textAppearanceListItem"
                             android:textSize="20dp"
-                            android:paddingStart="8dp"/>
+                            android:paddingStart="8dp"
+                            android:fontFamily="@font/pretendardmedium"/>
                     </LinearLayout>
 
                     <!-- "지금 가장 빠른 열차는 00 : 00" -->
@@ -126,7 +126,7 @@
                             android:gravity="center"
                             android:textSize="11sp"
                             android:textColor="#000000"
-                            android:text="지금 가장 빠른 열차는  "
+                            android:text="지금 가장 빠른 열차는   "
                             android:fontFamily="@font/pretendardmedium"/>
 
                         <TextView
@@ -143,14 +143,14 @@
 
                     <!-- 중간역 -->
                     <ToggleButton
-                        android:id="@+id/toggleButton"
+                        android:id="@+id/transitStnToggleBnt"
                         android:layout_width="350dp"
                         android:layout_height="35dp"
                         android:background="@drawable/toggle"
-                        android:fontFamily="@font/pretendardmedium"
                         android:textColor="#FF616161"
                         android:textOff="▶ 경유역 확인"
-                        android:textOn="■ 경유역 숨김" />
+                        android:textOn="■ 경유역 숨김"
+                        android:fontFamily="@font/pretendardmedium"/>
 
                     <androidx.recyclerview.widget.RecyclerView
                         android:id="@+id/recyclerViewStations"
@@ -183,10 +183,10 @@
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
                             android:layout_weight="1"
-                            android:fontFamily="@font/pretendardmedium"
                             android:textAppearance="?attr/textAppearanceListItem"
                             android:textSize="20dp"
-                            android:paddingStart="8dp"/>
+                            android:paddingStart="8dp"
+                            android:fontFamily="@font/pretendardmedium"/>
                     </LinearLayout>
 
                     <!-- "도착 예정 시간은 00 : 00" -->
@@ -204,7 +204,7 @@
                             android:gravity="center"
                             android:textSize="11sp"
                             android:textColor="#000000"
-                            android:text="도착 예정 시간은  "
+                            android:text="도착 예정 시간은   "
                             android:fontFamily="@font/pretendardmedium"/>
 
                         <TextView
