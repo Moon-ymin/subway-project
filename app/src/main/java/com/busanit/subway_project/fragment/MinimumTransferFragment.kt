@@ -10,6 +10,7 @@ import android.content.Intent
 import android.os.Build
 import android.os.Bundle
 import android.os.CountDownTimer
+import android.text.TextUtils.split
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -23,6 +24,7 @@ import com.busanit.subway_project.alarm.AlarmReceiver
 import com.busanit.subway_project.databinding.FragmentMinimumTransferBinding
 import com.busanit.subway_project.model.Line
 import com.busanit.subway_project.model.Station
+import java.sql.Time
 import java.util.Calendar
 
 class MinimumTransferFragment : Fragment() {
@@ -135,34 +137,39 @@ class MinimumTransferFragment : Fragment() {
     private fun setUpRecyclerView() {
 
         allStations = listOf(
-            Station(100, "금련산역", Line(1, "1호선"), 0L),
-            Station(101, "양산역", Line(2, "1호선"), 0L),
-            Station(102, "남천역", Line(3, "1호선"), 0L),
-            Station(103, "경성대/부경대역", Line(4, "1호선"), 0L),
-            Station(104, "대연역", Line(8, "2호선"), 0L),
-            Station(105, "못골역", Line(9, "2호선"), 0L)
+            Station(100, "금련산역", Line(1, "1호선"), 0),
+            Station(101, "남천역", Line(2, "1호선"), 0),
+            Station(102, "경성대부경대역", Line(3, "1호선"), 0),
+            Station(103, "대연역", Line(4, "1호선"), 0),
+            Station(104, "못골역", Line(8, "2호선"), 0),
+            Station(105, "지게골역", Line(9, "2호선"), 0),
+            Station(105, "지게골역", Line(9, "2호선"), 0),
+            Station(105, "지게골역", Line(9, "2호선"), 0),
+            Station(105, "지게골역", Line(9, "2호선"), 0),
+            Station(105, "지게골역", Line(9, "2호선"), 0),
+            Station(105, "지게골역", Line(9, "2호선"), 0)
         )
 
         // 출발역 설정
         binding.startStationTextView.text = allStations.first().sname
         when (allStations.first().line.lineCd) {
-            1L -> binding.startStationLineTextView.apply {
+            1 -> binding.startStationLineTextView.apply {
                 this.setBackgroundResource(R.drawable.image_line1_orange)
                 this.setText("1")
             }
-            2L -> binding.startStationLineTextView.apply {
+            2 -> binding.startStationLineTextView.apply {
                 this.setBackgroundResource(R.drawable.image_line2_green)
                 this.setText("2")
             }
-            3L -> binding.startStationLineTextView.apply {
+            3 -> binding.startStationLineTextView.apply {
                 this.setBackgroundResource(R.drawable.image_line3_brown)
                 this.setText("3")
             }
-            4L -> binding.startStationLineTextView.apply {
+            4 -> binding.startStationLineTextView.apply {
                 this.setBackgroundResource(R.drawable.image_line4_blue)
                 this.setText("4")
             }
-            8L -> binding.startStationLineTextView.apply {
+            8 -> binding.startStationLineTextView.apply {
                 this.setBackgroundResource(R.drawable.image_line8_sky)
                 this.setText("동")
             }
@@ -171,6 +178,11 @@ class MinimumTransferFragment : Fragment() {
                 this.setText("김")
             }
         }
+
+        val startTime: String = setTime("13:50:00");
+        binding.startTimeTextView.text = startTime
+
+//      //////////////////////////////////////////////////////////////////////
 
         intermediateStations = allStations.subList(1, allStations.size - 1)
 
@@ -196,26 +208,28 @@ class MinimumTransferFragment : Fragment() {
             adapter.updateStations(stations)
         }
 
+//      //////////////////////////////////////////////////////////////////////
+
         // 도착역 설정
         binding.endStationText.text = allStations.last().sname
         when (allStations.last().line.lineCd) {
-            1L -> binding.endStationLineTextView.apply {
+            1 -> binding.endStationLineTextView.apply {
                 this.setBackgroundResource(R.drawable.image_line1_orange)
                 this.setText("1")
             }
-            2L -> binding.endStationLineTextView.apply {
+            2 -> binding.endStationLineTextView.apply {
                 this.setBackgroundResource(R.drawable.image_line2_green)
                 this.setText("2")
             }
-            3L -> binding.endStationLineTextView.apply {
+            3 -> binding.endStationLineTextView.apply {
                 this.setBackgroundResource(R.drawable.image_line3_brown)
                 this.setText("3")
             }
-            4L -> binding.endStationLineTextView.apply {
+            4 -> binding.endStationLineTextView.apply {
                 this.setBackgroundResource(R.drawable.image_line4_blue)
                 this.setText("4")
             }
-            8L -> binding.endStationLineTextView.apply {
+            8 -> binding.endStationLineTextView.apply {
                 this.setBackgroundResource(R.drawable.image_line8_sky)
                 this.setText("동")
             }
@@ -224,6 +238,23 @@ class MinimumTransferFragment : Fragment() {
                 this.setText("김")
             }
         }
+
+        val endTime: String = setTime("14:00:00")
+        binding.endTimeTextView.text = endTime
+    }
+
+    private fun setTime(time: String): String {
+
+        val parts = time.split(":")
+
+        val hours = parts[0].toInt()
+        val minutes = parts[1].toInt()
+        val seconds = parts[2].toInt()
+
+        // 분:초 형식으로 포맷팅
+        val timeText = String.format("%02d : %02d", hours, minutes)
+
+        return timeText
     }
 
     // 타이머 종료 시 알람 울리게 하는 메서드
@@ -255,13 +286,4 @@ class MinimumTransferFragment : Fragment() {
 
         alarmManager.setExact(AlarmManager.RTC_WAKEUP, timeInMillis, pendingIntent)
     }
-
-    // 중간 역 길이에 따라 왼쪽 바 길이 조정
-//    private fun adjustLineViewHeight(itemCount: Int) {
-//
-//        val params = binding.lineView.layoutParams
-//        params.height = itemCount * 200
-//
-//        binding.lineView.layoutParams = params
-//    }
 }

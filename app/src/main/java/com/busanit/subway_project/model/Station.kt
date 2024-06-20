@@ -4,5 +4,5 @@ data class Station (
     val scode: Int,
     val sname: String,
     val line: Line,
-    val exchange: Long
+    val exchange: Int
 )

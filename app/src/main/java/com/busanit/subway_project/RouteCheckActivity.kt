@@ -6,6 +6,7 @@ import android.view.Menu
 import android.widget.Button
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.SearchView
+import androidx.appcompat.widget.Toolbar
 import androidx.viewpager2.widget.ViewPager2
 import com.busanit.subway_project.adapter.RoutePagerAdapter
 import com.busanit.subway_project.databinding.ActivityRouteCheckBinding
@@ -42,16 +43,15 @@ class RouteCheckActivity : AppCompatActivity() {
         backToMainButton.setOnClickListener {
             finish()
         }
+
+        // 상단바 구현
+        val toolbar: Toolbar = findViewById(R.id.toolbar)
+        setSupportActionBar(toolbar)
     }
 
     // 상단바 구현
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
-        menuInflater.inflate(R.menu.main_search, menu)
-
-        val searchItem = menu?.findItem(R.id.search)
-        val searchView = searchItem?.actionView as SearchView
-        val searchManager = getSystemService(SEARCH_SERVICE) as SearchManager
-        searchView.setSearchableInfo(searchManager.getSearchableInfo(componentName))
+        menuInflater.inflate(R.menu.main, menu)
 
         return false
     }
