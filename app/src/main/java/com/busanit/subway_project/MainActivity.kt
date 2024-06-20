@@ -2,6 +2,7 @@ package com.busanit.subway_project
 
 import DBHelper
 import android.app.SearchManager
+import android.content.Intent
 import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
 import android.util.Log
@@ -83,7 +84,9 @@ class MainActivity : AppCompatActivity() {
                 // Toast.makeText(this@MainActivity, "경로 찾기!", Toast.LENGTH_SHORT).show()
                 sendLocationDataToServer(from, via, to)
 
-                // 🎈🎈🎈🎈🎈🎈★★★★★인텐트 구현★★★★★🎈🎈🎈🎈🎈🎈
+                // 🎈인텐트 구현🎈
+                val intent = Intent(this, RouteCheckActivity::class.java)
+                startActivity(intent)
             }
         }
 
