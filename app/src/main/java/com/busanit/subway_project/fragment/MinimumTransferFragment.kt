@@ -1,14 +1,25 @@
 package com.busanit.subway_project.fragment
 
+import android.app.AlarmManager
+import android.app.NotificationChannel
+import android.app.NotificationManager
+import android.app.PendingIntent
 import android.app.TimePickerDialog
+import android.content.Context
+import android.content.Intent
+import android.os.Build
 import android.os.Bundle
 import android.os.CountDownTimer
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.TextView
+import androidx.core.content.ContentProviderCompat.requireContext
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.busanit.subway_project.R
 import com.busanit.subway_project.adapter.StationAdapter
+import com.busanit.subway_project.alarm.AlarmReceiver
 import com.busanit.subway_project.databinding.FragmentMinimumTransferBinding
 import com.busanit.subway_project.model.Line
 import com.busanit.subway_project.model.Station
@@ -58,7 +69,7 @@ class MinimumTransferFragment : Fragment() {
             val timePickerDialog = TimePickerDialog(
                 requireContext(),
                 { _, selectedHour, selectedMinute ->
-                    val selectedTime = String.format("%02d:%02d", selectedHour, selectedMinute)
+                    val selectedTime = String.format("%02d : %02d", selectedHour, selectedMinute)
                     binding.setTime.text = "출발 $selectedTime"
                 },
                 hour,
@@ -69,7 +80,7 @@ class MinimumTransferFragment : Fragment() {
         }
 
         // 타이머 설정 버튼
-        binding.setAlarm.setOnClickListener {
+        binding.setTimer.setOnClickListener {
 
             timer?.cancel() // 기존 타이머가 있다면 취소
 
@@ -89,12 +100,14 @@ class MinimumTransferFragment : Fragment() {
                     val secondsRemaining = (millisUntilFinished / 1000) % 60
 
                     // 버튼의 텍스트를 남은 시간으로 업데이트
-                    binding.setAlarm.text = String.format("%02d : %02d : %02d", hoursRemaining, minutesRemaining, secondsRemaining)
+                    binding.setTimer.text = String.format("%02d : %02d : %02d", hoursRemaining, minutesRemaining, secondsRemaining)
                 }
 
                 override fun onFinish() {
+                    setAlarm()
+
                     // 타이머 종료 시 호출
-                    binding.setAlarm.text = "타이머 종료"
+                    binding.setTimer.text = "타이머 종료"
 
                     // 여기에 타이머가 종료된 후
                     timer?.cancel()
@@ -106,7 +119,6 @@ class MinimumTransferFragment : Fragment() {
             }
 
         setUpRecyclerView()
-        setupToggleButton()
     }
 
     // 총 소요 시간 계산 메서드
@@ -124,15 +136,41 @@ class MinimumTransferFragment : Fragment() {
 
         allStations = listOf(
             Station(100, "금련산역", Line(1, "1호선"), 0L),
-            Station(101, "양산역", Line(1, "1호선"), 0L),
-            Station(102, "남천역", Line(1, "1호선"), 0L),
-            Station(103, "경성대/부경대역", Line(1, "1호선"), 0L),
-            Station(104, "대연역", Line(1, "1호선"), 0L),
-            Station(105, "못골역", Line(1, "1호선"), 0L)
+            Station(101, "양산역", Line(2, "1호선"), 0L),
+            Station(102, "남천역", Line(3, "1호선"), 0L),
+            Station(103, "경성대/부경대역", Line(4, "1호선"), 0L),
+            Station(104, "대연역", Line(8, "2호선"), 0L),
+            Station(105, "못골역", Line(9, "2호선"), 0L)
         )
 
         // 출발역 설정
         binding.startStationTextView.text = allStations.first().sname
+        when (allStations.first().line.lineCd) {
+            1L -> binding.startStationLineTextView.apply {
+                this.setBackgroundResource(R.drawable.image_line1_orange)
+                this.setText("1")
+            }
+            2L -> binding.startStationLineTextView.apply {
+                this.setBackgroundResource(R.drawable.image_line2_green)
+                this.setText("2")
+            }
+            3L -> binding.startStationLineTextView.apply {
+                this.setBackgroundResource(R.drawable.image_line3_brown)
+                this.setText("3")
+            }
+            4L -> binding.startStationLineTextView.apply {
+                this.setBackgroundResource(R.drawable.image_line4_blue)
+                this.setText("4")
+            }
+            8L -> binding.startStationLineTextView.apply {
+                this.setBackgroundResource(R.drawable.image_line8_sky)
+                this.setText("동")
+            }
+            else -> binding.startStationLineTextView.apply {
+                this.setBackgroundResource(R.drawable.image_line9_purple)
+                this.setText("김")
+            }
+        }
 
         intermediateStations = allStations.subList(1, allStations.size - 1)
 
@@ -143,13 +181,9 @@ class MinimumTransferFragment : Fragment() {
         binding.recyclerViewStations.layoutManager = LinearLayoutManager(context)
         binding.recyclerViewStations.adapter = adapter
 
-        // 도착역 설정
-        binding.endStationText.text = allStations.last().sname
-    }
-
-    private fun setupToggleButton() {
-
+        // 토글 버튼 클릭 시
         binding.toggleButton.setOnCheckedChangeListener { _, isChecked ->
+
             if (isChecked) {
                 // 중간 역 보이기
                 stations = intermediateStations
@@ -161,14 +195,73 @@ class MinimumTransferFragment : Fragment() {
             }
             adapter.updateStations(stations)
         }
+
+        // 도착역 설정
+        binding.endStationText.text = allStations.last().sname
+        when (allStations.last().line.lineCd) {
+            1L -> binding.endStationLineTextView.apply {
+                this.setBackgroundResource(R.drawable.image_line1_orange)
+                this.setText("1")
+            }
+            2L -> binding.endStationLineTextView.apply {
+                this.setBackgroundResource(R.drawable.image_line2_green)
+                this.setText("2")
+            }
+            3L -> binding.endStationLineTextView.apply {
+                this.setBackgroundResource(R.drawable.image_line3_brown)
+                this.setText("3")
+            }
+            4L -> binding.endStationLineTextView.apply {
+                this.setBackgroundResource(R.drawable.image_line4_blue)
+                this.setText("4")
+            }
+            8L -> binding.endStationLineTextView.apply {
+                this.setBackgroundResource(R.drawable.image_line8_sky)
+                this.setText("동")
+            }
+            else -> binding.endStationLineTextView.apply {
+                this.setBackgroundResource(R.drawable.image_line9_purple)
+                this.setText("김")
+            }
+        }
+    }
+
+    // 타이머 종료 시 알람 울리게 하는 메서드
+    private fun createNotificationChannel() {
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+
+            val name = "타이머 채널"
+            val descriptionText = "타이머 채널입니다."
+            val importance = NotificationManager.IMPORTANCE_DEFAULT
+            val channel = NotificationChannel(AlarmReceiver.CHANNEL_ID, name, importance).apply {
+                description = descriptionText
+            }
+
+            val notificationManager: NotificationManager =
+                requireContext().getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+
+            notificationManager.createNotificationChannel(channel)
+        }
+    }
+
+    private fun setAlarm() {
+
+        val intent = Intent(requireContext(), AlarmReceiver::class.java)
+        val pendingIntent = PendingIntent.getBroadcast(requireContext(), 0, intent, PendingIntent.FLAG_UPDATE_CURRENT)
+        val alarmManager = requireContext().getSystemService(Context.ALARM_SERVICE) as AlarmManager
+
+        val timeInMillis = Calendar.getInstance().timeInMillis + 500 // 1초 후 알람
+
+        alarmManager.setExact(AlarmManager.RTC_WAKEUP, timeInMillis, pendingIntent)
     }
 
     // 중간 역 길이에 따라 왼쪽 바 길이 조정
-    private fun adjustLineViewHeight(itemCount: Int) {
-
-        val params = binding.lineView.layoutParams
-        params.height = itemCount * 200
-
-        binding.lineView.layoutParams = params
-    }
+//    private fun adjustLineViewHeight(itemCount: Int) {
+//
+//        val params = binding.lineView.layoutParams
+//        params.height = itemCount * 200
+//
+//        binding.lineView.layoutParams = params
+//    }
 }
