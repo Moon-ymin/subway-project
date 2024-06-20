@@ -142,6 +142,11 @@ class MinimumTransferFragment : Fragment() {
             Station(102, "경성대부경대역", Line(3, "1호선"), 0),
             Station(103, "대연역", Line(4, "1호선"), 0),
             Station(104, "못골역", Line(8, "2호선"), 0),
+            Station(105, "지게골역", Line(9, "2호선"), 0),
+            Station(105, "지게골역", Line(9, "2호선"), 0),
+            Station(105, "지게골역", Line(9, "2호선"), 0),
+            Station(105, "지게골역", Line(9, "2호선"), 0),
+            Station(105, "지게골역", Line(9, "2호선"), 0),
             Station(105, "지게골역", Line(9, "2호선"), 0)
         )
 
@@ -174,7 +179,7 @@ class MinimumTransferFragment : Fragment() {
             }
         }
 
-        val startTime: String = setFastestTime("13:50:00");
+        val startTime: String = setTime("13:50:00");
         binding.startTimeTextView.text = startTime
 
 //      //////////////////////////////////////////////////////////////////////
@@ -233,9 +238,12 @@ class MinimumTransferFragment : Fragment() {
                 this.setText("김")
             }
         }
+
+        val endTime: String = setTime("14:00:00")
+        binding.endTimeTextView.text = endTime
     }
 
-    private fun setFastestTime(time: String): String {
+    private fun setTime(time: String): String {
 
         val parts = time.split(":")
 
