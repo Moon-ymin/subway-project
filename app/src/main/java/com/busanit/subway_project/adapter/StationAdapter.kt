@@ -38,27 +38,27 @@ class StationAdapter(private var stations: List<Station>) : RecyclerView.Adapter
         val station = stations[position]
 
         when (station.line.lineCd) {
-            1L -> {
+            1 -> {
                 val textView = holder.itemView.findViewById<TextView>(R.id.lineTextView)
                 textView.setBackgroundResource(R.drawable.image_line1_orange)
                 textView.setText("1")
             }
-            2L -> {
+            2 -> {
                 val textView = holder.itemView.findViewById<TextView>(R.id.lineTextView)
                 textView.setBackgroundResource(R.drawable.image_line2_green)
                 textView.setText("2")
             }
-            3L -> {
+            3 -> {
                 val textView = holder.itemView.findViewById<TextView>(R.id.lineTextView)
                 textView.setBackgroundResource(R.drawable.image_line3_brown)
                 textView.setText("3")
             }
-            4L -> {
+            4 -> {
                 val textView = holder.itemView.findViewById<TextView>(R.id.lineTextView)
                 textView.setBackgroundResource(R.drawable.image_line4_blue)
                 textView.setText("4")
             }
-            8L -> {
+            8 -> {
                 val textView = holder.itemView.findViewById<TextView>(R.id.lineTextView)
                 textView.setBackgroundResource(R.drawable.image_line8_sky)
                 textView.setText("동")

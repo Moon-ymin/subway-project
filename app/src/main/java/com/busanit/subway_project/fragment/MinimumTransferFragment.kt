@@ -135,34 +135,34 @@ class MinimumTransferFragment : Fragment() {
     private fun setUpRecyclerView() {
 
         allStations = listOf(
-            Station(100, "금련산역", Line(1, "1호선"), 0L),
-            Station(101, "양산역", Line(2, "1호선"), 0L),
-            Station(102, "남천역", Line(3, "1호선"), 0L),
-            Station(103, "경성대/부경대역", Line(4, "1호선"), 0L),
-            Station(104, "대연역", Line(8, "2호선"), 0L),
-            Station(105, "못골역", Line(9, "2호선"), 0L)
+            Station(100, "금련산역", Line(1, "1호선"), 0),
+            Station(101, "남천역", Line(2, "1호선"), 0),
+            Station(102, "경성대부경대역", Line(3, "1호선"), 0),
+            Station(103, "대연역", Line(4, "1호선"), 0),
+            Station(104, "못골역", Line(8, "2호선"), 0),
+            Station(105, "지게골역", Line(9, "2호선"), 0)
         )
 
         // 출발역 설정
         binding.startStationTextView.text = allStations.first().sname
         when (allStations.first().line.lineCd) {
-            1L -> binding.startStationLineTextView.apply {
+            1 -> binding.startStationLineTextView.apply {
                 this.setBackgroundResource(R.drawable.image_line1_orange)
                 this.setText("1")
             }
-            2L -> binding.startStationLineTextView.apply {
+            2 -> binding.startStationLineTextView.apply {
                 this.setBackgroundResource(R.drawable.image_line2_green)
                 this.setText("2")
             }
-            3L -> binding.startStationLineTextView.apply {
+            3 -> binding.startStationLineTextView.apply {
                 this.setBackgroundResource(R.drawable.image_line3_brown)
                 this.setText("3")
             }
-            4L -> binding.startStationLineTextView.apply {
+            4 -> binding.startStationLineTextView.apply {
                 this.setBackgroundResource(R.drawable.image_line4_blue)
                 this.setText("4")
             }
-            8L -> binding.startStationLineTextView.apply {
+            8 -> binding.startStationLineTextView.apply {
                 this.setBackgroundResource(R.drawable.image_line8_sky)
                 this.setText("동")
             }
@@ -199,23 +199,23 @@ class MinimumTransferFragment : Fragment() {
         // 도착역 설정
         binding.endStationText.text = allStations.last().sname
         when (allStations.last().line.lineCd) {
-            1L -> binding.endStationLineTextView.apply {
+            1 -> binding.endStationLineTextView.apply {
                 this.setBackgroundResource(R.drawable.image_line1_orange)
                 this.setText("1")
             }
-            2L -> binding.endStationLineTextView.apply {
+            2 -> binding.endStationLineTextView.apply {
                 this.setBackgroundResource(R.drawable.image_line2_green)
                 this.setText("2")
             }
-            3L -> binding.endStationLineTextView.apply {
+            3 -> binding.endStationLineTextView.apply {
                 this.setBackgroundResource(R.drawable.image_line3_brown)
                 this.setText("3")
             }
-            4L -> binding.endStationLineTextView.apply {
+            4 -> binding.endStationLineTextView.apply {
                 this.setBackgroundResource(R.drawable.image_line4_blue)
                 this.setText("4")
             }
-            8L -> binding.endStationLineTextView.apply {
+            8 -> binding.endStationLineTextView.apply {
                 this.setBackgroundResource(R.drawable.image_line8_sky)
                 this.setText("동")
             }
