@@ -34,15 +34,15 @@ import retrofit2.Response
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 
+public var isEng = false   // 한 영 버전 여부 플래그
+
 class MainActivity : AppCompatActivity() {
 
     private lateinit var photoView: PhotoView
     private lateinit var binding: ActivityMainBinding
     private lateinit var dbHelper: DBHelper
-    private var isEng = false   // 한 영 버전 여부 플래그
     private lateinit var locabutton: Button
     private lateinit var apiService: ApiService // Retrofit 인터페이스를 사용할 변수
-
 
     // 출발, 경유, 도착 (scode) 설정
     private var from = 0
@@ -82,6 +82,8 @@ class MainActivity : AppCompatActivity() {
             } else {
                 // Toast.makeText(this@MainActivity, "경로 찾기!", Toast.LENGTH_SHORT).show()
                 sendLocationDataToServer(from, via, to)
+
+                // 🎈🎈🎈🎈🎈🎈★★★★★인텐트 구현★★★★★🎈🎈🎈🎈🎈🎈
             }
         }
 
