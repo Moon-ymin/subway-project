@@ -46,7 +46,7 @@ class RouteCheckActivity : AppCompatActivity() {
 
         // 상단바 구현
         val toolbar: Toolbar = findViewById(R.id.toolbar)
-        setSupportActionBar(toolbar) // 툴바를 액션바로 설정
+        setSupportActionBar(toolbar)
     }
 
     // 상단바 구현

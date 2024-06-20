@@ -10,6 +10,7 @@ import android.content.Intent
 import android.os.Build
 import android.os.Bundle
 import android.os.CountDownTimer
+import android.text.TextUtils.split
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -23,6 +24,7 @@ import com.busanit.subway_project.alarm.AlarmReceiver
 import com.busanit.subway_project.databinding.FragmentMinimumTransferBinding
 import com.busanit.subway_project.model.Line
 import com.busanit.subway_project.model.Station
+import java.sql.Time
 import java.util.Calendar
 
 class MinimumTransferFragment : Fragment() {
@@ -172,6 +174,11 @@ class MinimumTransferFragment : Fragment() {
             }
         }
 
+        val startTime: String = setFastestTime("13:50:00");
+        binding.startTimeTextView.text = startTime
+
+//      //////////////////////////////////////////////////////////////////////
+
         intermediateStations = allStations.subList(1, allStations.size - 1)
 
         stations = listOf()
@@ -195,6 +202,8 @@ class MinimumTransferFragment : Fragment() {
             }
             adapter.updateStations(stations)
         }
+
+//      //////////////////////////////////////////////////////////////////////
 
         // 도착역 설정
         binding.endStationText.text = allStations.last().sname
@@ -226,6 +235,20 @@ class MinimumTransferFragment : Fragment() {
         }
     }
 
+    private fun setFastestTime(time: String): String {
+
+        val parts = time.split(":")
+
+        val hours = parts[0].toInt()
+        val minutes = parts[1].toInt()
+        val seconds = parts[2].toInt()
+
+        // 분:초 형식으로 포맷팅
+        val timeText = String.format("%02d : %02d", hours, minutes)
+
+        return timeText
+    }
+
     // 타이머 종료 시 알람 울리게 하는 메서드
     private fun createNotificationChannel() {
 
@@ -255,13 +278,4 @@ class MinimumTransferFragment : Fragment() {
 
         alarmManager.setExact(AlarmManager.RTC_WAKEUP, timeInMillis, pendingIntent)
     }
-
-    // 중간 역 길이에 따라 왼쪽 바 길이 조정
-//    private fun adjustLineViewHeight(itemCount: Int) {
-//
-//        val params = binding.lineView.layoutParams
-//        params.height = itemCount * 200
-//
-//        binding.lineView.layoutParams = params
-//    }
 }
