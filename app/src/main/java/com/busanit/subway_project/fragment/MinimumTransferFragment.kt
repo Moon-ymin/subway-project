@@ -1,7 +1,6 @@
 package com.busanit.subway_project.fragment
 
 import android.app.TimePickerDialog
-import android.content.Context
 import android.os.Bundle
 import android.os.CountDownTimer
 import android.view.LayoutInflater
@@ -12,7 +11,6 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.busanit.subway_project.R
 import com.busanit.subway_project.RouteCheckActivity
 import com.busanit.subway_project.adapter.StationAdapter
-import com.busanit.subway_project.alarm.TimerListener
 import com.busanit.subway_project.databinding.FragmentMinimumTransferBinding
 import com.busanit.subway_project.isEng
 import com.busanit.subway_project.model.Line
@@ -29,8 +27,6 @@ class MinimumTransferFragment : Fragment() {
 
     // 타이머 관련
     private var timer: CountDownTimer? = null
-    // 타이머 종료 후 알람 관련
-    private var listener: TimerListener? = null
 
     override fun onCreateView(
 
@@ -135,7 +131,6 @@ class MinimumTransferFragment : Fragment() {
                 override fun onFinish() {
                     timer?.cancel()
                     activity.setTimerRunning(false)
-                    listener?.onTimerFinished()
                 }
             }
 
@@ -207,6 +202,7 @@ class MinimumTransferFragment : Fragment() {
             }
         }
 
+        // "지금 가장 빠른 열차는 00:00" 시간 설정
         val startTime: String = setTime("13:50:00");
         binding.startTimeTextView.text = startTime
 
@@ -267,11 +263,12 @@ class MinimumTransferFragment : Fragment() {
             }
         }
 
+        // "도착 예정 시간은 00:00" 시간 설정
         val endTime: String = setTime("14:00:00")
         binding.endTimeTextView.text = endTime
     }
 
-    // 운행 시간 안내 메서드
+    // "지금 가장 빠른 열차는 00:00" & "도착 예정 시간은 00:00"에서 시간 구현하는 메서드
     private fun setTime(time: String): String {
 
         val parts = time.split(":")
@@ -283,20 +280,5 @@ class MinimumTransferFragment : Fragment() {
         val timeText = String.format("%02d : %02d", hours, minutes)
 
         return timeText
-    }
-
-    // 타이머 종료 후 알람 설정
-    override fun onAttach(context: Context) {
-        super.onAttach(context)
-        if (context is TimerListener) {
-            listener = context
-        } else {
-            println("다시 시도해 주시기를 바랍니다.")
-        }
-    }
-
-    override fun onDetach() {
-        super.onDetach()
-        listener = null
     }
 }
