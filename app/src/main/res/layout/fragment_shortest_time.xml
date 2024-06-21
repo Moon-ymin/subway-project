@@ -7,6 +7,4 @@
     android:orientation="vertical"
     tools:context=".RouteCheckActivity">
 
-    <!-- 최단 시간 -->
-
 </LinearLayout>

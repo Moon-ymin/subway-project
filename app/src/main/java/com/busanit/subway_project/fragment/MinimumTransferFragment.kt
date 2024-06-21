@@ -1,31 +1,22 @@
 package com.busanit.subway_project.fragment
 
-import android.app.AlarmManager
-import android.app.NotificationChannel
-import android.app.NotificationManager
-import android.app.PendingIntent
 import android.app.TimePickerDialog
 import android.content.Context
-import android.content.Intent
-import android.os.Build
 import android.os.Bundle
 import android.os.CountDownTimer
-import android.text.TextUtils.split
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.TextView
-import androidx.core.content.ContentProviderCompat.requireContext
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.busanit.subway_project.R
+import com.busanit.subway_project.RouteCheckActivity
 import com.busanit.subway_project.adapter.StationAdapter
-import com.busanit.subway_project.alarm.AlarmReceiver
+import com.busanit.subway_project.alarm.TimerListener
 import com.busanit.subway_project.databinding.FragmentMinimumTransferBinding
 import com.busanit.subway_project.isEng
 import com.busanit.subway_project.model.Line
 import com.busanit.subway_project.model.Station
-import java.sql.Time
 import java.util.Calendar
 
 class MinimumTransferFragment : Fragment() {
@@ -38,6 +29,8 @@ class MinimumTransferFragment : Fragment() {
 
     // 타이머 관련
     private var timer: CountDownTimer? = null
+    // 타이머 종료 후 알람 관련
+    private var listener: TimerListener? = null
 
     override fun onCreateView(
 
@@ -70,7 +63,7 @@ class MinimumTransferFragment : Fragment() {
             binding.totalStationTextView.text = "${stations}개 역 이동"
         }
 
-        // 시간 설정 버튼 → 사용자가 직접 시간 설정
+        // "출발 시간 설정" : 사용자가 직접 시간 설정
         if (isEng) {
             binding.setTime.text = "Set Departure Time"
         }
@@ -98,11 +91,24 @@ class MinimumTransferFragment : Fragment() {
             timePickerDialog.show()
         }
 
-        // 타이머 설정 버튼
+        // "타이머 설정" 버튼
         if (isEng) {
             binding.setTimer.text = "Set Timer"
         }
+
         binding.setTimer.setOnClickListener {
+
+            val activity = requireActivity() as RouteCheckActivity
+
+            if (activity.isTimerRunning()) {
+                // 이미 타이머가 실행 중인 경우
+                if (isEng) {
+                    binding.setTimer.text = "Timer is already running."
+                } else {
+                    binding.setTimer.text = "타이머가 이미 실행 중입니다."
+                }
+                return@setOnClickListener
+            }
 
             timer?.cancel() // 기존 타이머가 있다면 취소
 
@@ -110,7 +116,7 @@ class MinimumTransferFragment : Fragment() {
 //                totalSeconds = it.getInt(MainActivity.EXTRA_MINUTES, 0)
 //            }
 
-            var totalSeconds = 30
+            var totalSeconds = 30   // 임의의 초
 
             // CountDownTimer 설정
             timer = object : CountDownTimer((totalSeconds * 1000).toLong(), 1000) {
@@ -121,20 +127,21 @@ class MinimumTransferFragment : Fragment() {
                     val minutesRemaining = millisUntilFinished / 1000 / 60
                     val secondsRemaining = (millisUntilFinished / 1000) % 60
 
-                    // 버튼의 텍스트를 남은 시간으로 업데이트
+                    // 버튼의 텍스트("타이머 설정")를 남은 시간으로 업데이트
                     binding.setTimer.text = String.format("%02d : %02d : %02d", hoursRemaining, minutesRemaining, secondsRemaining)
                 }
 
+                // 타이머 종료 후
                 override fun onFinish() {
-                    setAlarm()
-
-                    // 타이머가 종료된 후
                     timer?.cancel()
+                    activity.setTimerRunning(false)
+                    listener?.onTimerFinished()
                 }
             }
 
             // 타이머 시작
             (timer as CountDownTimer).start()
+            activity.setTimerRunning(true)
             }
 
         // 리사이클러 뷰
@@ -278,33 +285,18 @@ class MinimumTransferFragment : Fragment() {
         return timeText
     }
 
-    // 타이머 종료 시 알람 울리게 하는 메서드
-    private fun createNotificationChannel() {
-
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-
-            val name = "타이머 채널"
-            val descriptionText = "타이머 채널입니다."
-            val importance = NotificationManager.IMPORTANCE_DEFAULT
-            val channel = NotificationChannel(AlarmReceiver.CHANNEL_ID, name, importance).apply {
-                description = descriptionText
-            }
-
-            val notificationManager: NotificationManager =
-                requireContext().getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
-
-            notificationManager.createNotificationChannel(channel)
+    // 타이머 종료 후 알람 설정
+    override fun onAttach(context: Context) {
+        super.onAttach(context)
+        if (context is TimerListener) {
+            listener = context
+        } else {
+            println("다시 시도해 주시기를 바랍니다.")
         }
     }
 
-    private fun setAlarm() {
-
-        val intent = Intent(requireContext(), AlarmReceiver::class.java)
-        val pendingIntent = PendingIntent.getBroadcast(requireContext(), 0, intent, PendingIntent.FLAG_UPDATE_CURRENT)
-        val alarmManager = requireContext().getSystemService(Context.ALARM_SERVICE) as AlarmManager
-
-        val timeInMillis = Calendar.getInstance().timeInMillis + 500 // 1초 후 알람
-
-        alarmManager.setExact(AlarmManager.RTC_WAKEUP, timeInMillis, pendingIntent)
+    override fun onDetach() {
+        super.onDetach()
+        listener = null
     }
 }
