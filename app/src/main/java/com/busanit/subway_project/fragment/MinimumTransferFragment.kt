@@ -1,6 +1,7 @@
 package com.busanit.subway_project.fragment
 
 import android.app.TimePickerDialog
+import android.content.Context
 import android.os.Bundle
 import android.os.CountDownTimer
 import android.view.LayoutInflater
@@ -11,6 +12,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.busanit.subway_project.R
 import com.busanit.subway_project.RouteCheckActivity
 import com.busanit.subway_project.adapter.StationAdapter
+import com.busanit.subway_project.alarm.TimerCallback
 import com.busanit.subway_project.databinding.FragmentMinimumTransferBinding
 import com.busanit.subway_project.isEng
 import com.busanit.subway_project.model.Line
@@ -27,6 +29,9 @@ class MinimumTransferFragment : Fragment() {
 
     // 타이머 관련
     private var timer: CountDownTimer? = null
+
+    // 알림 관련
+    private var callback: TimerCallback? = null
 
     override fun onCreateView(
 
@@ -112,7 +117,7 @@ class MinimumTransferFragment : Fragment() {
 //                totalSeconds = it.getInt(MainActivity.EXTRA_MINUTES, 0)
 //            }
 
-            var totalSeconds = 30   // 임의의 초
+            var totalSeconds = 10   // 임의의 초
 
             // CountDownTimer 설정
             timer = object : CountDownTimer((totalSeconds * 1000).toLong(), 1000) {
@@ -130,6 +135,7 @@ class MinimumTransferFragment : Fragment() {
                 // 타이머 종료 후
                 override fun onFinish() {
                     timer?.cancel()
+                    callback?.onTimerFinished()
                     activity.setTimerRunning(false)
                 }
             }
@@ -280,5 +286,19 @@ class MinimumTransferFragment : Fragment() {
         val timeText = String.format("%02d : %02d", hours, minutes)
 
         return timeText
+    }
+
+    override fun onAttach(context: Context) {
+        super.onAttach(context)
+        if (context is TimerCallback) {
+            callback = context
+        } else {
+            throw RuntimeException("$context must implement TimerListener")
+        }
+    }
+
+    override fun onDetach() {
+        super.onDetach()
+        callback = null
     }
 }
