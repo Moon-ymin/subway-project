@@ -30,7 +30,7 @@ class MinimumTransferFragment : Fragment() {
     // 타이머 관련
     private var timer: CountDownTimer? = null
 
-    // 알림 관련
+    // 알림 및 알람 관련
     private var callback: TimerCallback? = null
 
     override fun onCreateView(
@@ -288,6 +288,7 @@ class MinimumTransferFragment : Fragment() {
         return timeText
     }
 
+    // 알림 및 알람 관련 메서드
     override fun onAttach(context: Context) {
         super.onAttach(context)
         if (context is TimerCallback) {
