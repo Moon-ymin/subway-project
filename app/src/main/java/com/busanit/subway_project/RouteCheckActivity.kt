@@ -23,11 +23,8 @@ import com.busanit.subway_project.adapter.RoutePagerAdapter
 import com.busanit.subway_project.alarm.AlarmReceiver
 import com.busanit.subway_project.alarm.TimerCallback
 import com.busanit.subway_project.databinding.ActivityRouteCheckBinding
-import com.busanit.subway_project.fragment.MinimumTransferFragment
 import com.google.android.material.tabs.TabLayout
 import com.google.android.material.tabs.TabLayoutMediator
-import android.Manifest
-import androidx.core.app.ActivityCompat
 
 class RouteCheckActivity : AppCompatActivity(), TimerCallback {
 
@@ -35,9 +32,9 @@ class RouteCheckActivity : AppCompatActivity(), TimerCallback {
     private var isTimerRunning = false
 
     // 알림 및 알람 설정
-    private val CHANNEL_ID = "TimerChannel1"
-    private val REQUEST_PERMISSIONS_CODE = 1
-    private val REQUIRED_PERMISSIONS = arrayOf(
+    private val CHANNEL_ID = "TimerChannel1"                // 채널 아이디(AlarmReceiver)
+    private val REQUEST_PERMISSIONS_CODE = 1                // 승인 코드
+    private val REQUIRED_PERMISSIONS = arrayOf(             // 권한 요청 목록
         android.Manifest.permission.POST_NOTIFICATIONS,
         android.Manifest.permission.USE_EXACT_ALARM,
         android.Manifest.permission.VIBRATE
@@ -89,7 +86,7 @@ class RouteCheckActivity : AppCompatActivity(), TimerCallback {
         createNotificationChannel()
         requestPermissionsIfNecessary()
 
-//        // 프래그먼트 추가
+        // 프래그먼트 추가
 //        if (savedInstanceState == null) {
 //            supportFragmentManager.beginTransaction()
 //                .replace(R.id.minimum_fragment, MinimumTransferFragment())
@@ -113,11 +110,12 @@ class RouteCheckActivity : AppCompatActivity(), TimerCallback {
         isTimerRunning = running
     }
 
-    // 타이머가 끝났을 경우 알림 및 알람 설정
+    // 타이머 & 알림 및 알람 연결하는 인터페이스 오버라이드
     override fun onTimerFinished() {
         setAlarm()
     }
 
+    // 타이머가 끝났을 경우 알림 및 알람 설정 메서드
     @SuppressLint("ScheduleExactAlarm", "MissingPermission")
     private fun setAlarm() {
 
@@ -143,8 +141,7 @@ class RouteCheckActivity : AppCompatActivity(), TimerCallback {
         NotificationManagerCompat.from(this).notify(1, notification)
     }
 
-
-    // 알림 구현 채널
+    // 타이머 & 알림 및 알람 구현 채널
     private fun createNotificationChannel() {
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
@@ -153,7 +150,7 @@ class RouteCheckActivity : AppCompatActivity(), TimerCallback {
                 "Timer Channel",
                 NotificationManager.IMPORTANCE_HIGH
             ).apply {
-                description = "Channel for timer notifications"
+                description = "Timer Notifications 채널"
             }
 
             val notificationManager: NotificationManager =
@@ -162,6 +159,7 @@ class RouteCheckActivity : AppCompatActivity(), TimerCallback {
         }
     }
 
+    // 필요한 경우 권한을 요청하는 메서드
     private fun requestPermissionsIfNecessary(): Boolean {
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
@@ -178,6 +176,7 @@ class RouteCheckActivity : AppCompatActivity(), TimerCallback {
         return true // 모든 권한이 허용되었으면 true 반환
     }
 
+    // 권한 요청 결과 메서드
     override fun onRequestPermissionsResult(
         requestCode: Int,
         permissions: Array<out String>,
@@ -188,8 +187,9 @@ class RouteCheckActivity : AppCompatActivity(), TimerCallback {
 
         if (requestCode == REQUEST_PERMISSIONS_CODE) {
             for (i in permissions.indices) {
+                // 권한 승인이 되지 않았을 경우 토스트 메시지 띄우기
                 if (grantResults[i] != PackageManager.PERMISSION_GRANTED) {
-                    Toast.makeText(this, "권한이 필요합니다: ${permissions[i]}", Toast.LENGTH_LONG).show()
+                    Toast.makeText(this, "${permissions[i]} : 권한이 필요합니다.", Toast.LENGTH_LONG).show()
                 }
             }
         }
