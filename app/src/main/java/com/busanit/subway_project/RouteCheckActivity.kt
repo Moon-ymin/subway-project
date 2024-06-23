@@ -1,20 +1,47 @@
 package com.busanit.subway_project
 
+import android.annotation.SuppressLint
+import android.app.AlarmManager
+import android.app.NotificationChannel
+import android.app.NotificationManager
+import android.app.PendingIntent
+import android.content.Context
+import android.content.Intent
+import android.content.pm.PackageManager
+import android.os.Build
 import android.os.Bundle
 import android.view.Menu
 import android.widget.Button
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
+import androidx.core.app.NotificationCompat
+import androidx.core.app.NotificationManagerCompat
+import androidx.core.content.ContextCompat
 import androidx.viewpager2.widget.ViewPager2
 import com.busanit.subway_project.adapter.RoutePagerAdapter
+import com.busanit.subway_project.alarm.AlarmReceiver
+import com.busanit.subway_project.alarm.TimerCallback
 import com.busanit.subway_project.databinding.ActivityRouteCheckBinding
+import com.busanit.subway_project.fragment.MinimumTransferFragment
 import com.google.android.material.tabs.TabLayout
 import com.google.android.material.tabs.TabLayoutMediator
+import android.Manifest
+import androidx.core.app.ActivityCompat
 
-class RouteCheckActivity : AppCompatActivity() {
+class RouteCheckActivity : AppCompatActivity(), TimerCallback {
 
     private lateinit var binding: ActivityRouteCheckBinding
     private var isTimerRunning = false
+
+    // 알림 및 알람 설정
+    private val CHANNEL_ID = "TimerChannel1"
+    private val REQUEST_PERMISSIONS_CODE = 1
+    private val REQUIRED_PERMISSIONS = arrayOf(
+        android.Manifest.permission.POST_NOTIFICATIONS,
+        android.Manifest.permission.USE_EXACT_ALARM,
+        android.Manifest.permission.VIBRATE
+    )
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -57,6 +84,17 @@ class RouteCheckActivity : AppCompatActivity() {
         // 상단바 구현
         val toolbar: Toolbar = findViewById(R.id.toolbar)
         setSupportActionBar(toolbar)
+
+        // 알림 구현 채널
+        createNotificationChannel()
+        requestPermissionsIfNecessary()
+
+//        // 프래그먼트 추가
+//        if (savedInstanceState == null) {
+//            supportFragmentManager.beginTransaction()
+//                .replace(R.id.minimum_fragment, MinimumTransferFragment())
+//                .commit()
+//        }
     }
 
     // 상단바 구현
@@ -73,5 +111,87 @@ class RouteCheckActivity : AppCompatActivity() {
 
     fun setTimerRunning(running: Boolean) {
         isTimerRunning = running
+    }
+
+    // 타이머가 끝났을 경우 알림 및 알람 설정
+    override fun onTimerFinished() {
+        setAlarm()
+    }
+
+    @SuppressLint("ScheduleExactAlarm", "MissingPermission")
+    private fun setAlarm() {
+
+        val intent = Intent(this, AlarmReceiver::class.java)
+        val pendingIntent = PendingIntent.getBroadcast(
+            this,
+            0,
+            intent,
+            PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT
+        )
+
+        val alarmManager = getSystemService(Context.ALARM_SERVICE) as AlarmManager
+        alarmManager.setExact(AlarmManager.RTC_WAKEUP, System.currentTimeMillis(), pendingIntent)
+
+        // 상단바 알림
+        val notification = NotificationCompat.Builder(this, CHANNEL_ID)
+            .setSmallIcon(R.drawable.train)
+            .setContentTitle("타이머 종료")
+            .setContentText("역에 도착했습니다!")
+            .setPriority(NotificationCompat.PRIORITY_HIGH)
+            .build()
+
+        NotificationManagerCompat.from(this).notify(1, notification)
+    }
+
+
+    // 알림 구현 채널
+    private fun createNotificationChannel() {
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            val channel = NotificationChannel(
+                "TimerChannel1",
+                "Timer Channel",
+                NotificationManager.IMPORTANCE_HIGH
+            ).apply {
+                description = "Channel for timer notifications"
+            }
+
+            val notificationManager: NotificationManager =
+                getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+            notificationManager.createNotificationChannel(channel)
+        }
+    }
+
+    private fun requestPermissionsIfNecessary(): Boolean {
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            val permissionsToRequest = REQUIRED_PERMISSIONS.filter {
+                ContextCompat.checkSelfPermission(this, it) != PackageManager.PERMISSION_GRANTED
+            }
+
+            if (permissionsToRequest.isNotEmpty()) {
+                requestPermissions(permissionsToRequest.toTypedArray(), REQUEST_PERMISSIONS_CODE)
+                return false // 권한 요청이 필요하면 false 반환
+            }
+        }
+
+        return true // 모든 권한이 허용되었으면 true 반환
+    }
+
+    override fun onRequestPermissionsResult(
+        requestCode: Int,
+        permissions: Array<out String>,
+        grantResults: IntArray
+    ) {
+
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+
+        if (requestCode == REQUEST_PERMISSIONS_CODE) {
+            for (i in permissions.indices) {
+                if (grantResults[i] != PackageManager.PERMISSION_GRANTED) {
+                    Toast.makeText(this, "권한이 필요합니다: ${permissions[i]}", Toast.LENGTH_LONG).show()
+                }
+            }
+        }
     }
 }
