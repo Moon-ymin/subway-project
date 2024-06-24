@@ -1,6 +1,6 @@
 package com.busanit.subway_project.alarm
 
-interface TimerListener {
+interface TimerCallback {
 
     fun onTimerFinished()
 }
