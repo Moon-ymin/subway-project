@@ -23,6 +23,7 @@ import androidx.appcompat.widget.Toolbar
 import androidx.core.content.ContextCompat
 import com.busanit.subway_project.databinding.ActivityMainBinding
 import com.busanit.subway_project.model.LocationData
+import com.busanit.subway_project.model.ResultWrapper
 import com.busanit.subway_project.model.Station
 import com.busanit.subway_project.retrofit.ApiService
 import com.busanit.subway_project.retrofit.RetrofitClient
@@ -83,10 +84,6 @@ class MainActivity : AppCompatActivity() {
             } else {
                 // Toast.makeText(this@MainActivity, "경로 찾기!", Toast.LENGTH_SHORT).show()
                 sendLocationDataToServer(from, via, to)
-
-                // 🎈인텐트 구현🎈
-                val intent = Intent(this, RouteCheckActivity::class.java)
-                startActivity(intent)
             }
         }
 
@@ -305,28 +302,36 @@ class MainActivity : AppCompatActivity() {
     }
 
     // 출발, 경유, 도착 정보를 서버에 전송하는 메서드
-    private fun sendLocationDataToServer(from: Int, via: Int, to: Int){
+    private fun sendLocationDataToServer(from: Int, via: Int, to: Int) {
         // 서버에 전송할 데이터 객체 생성
         val locationData = LocationData(from, via, to)
-        // Log.e("MainActivity", "Request data: $from, $via, $to ")
 
-        // Retrofit 을 통해 서버에 POST 요청 보내기
-        apiService.sendLocationData(locationData).enqueue(object : Callback<ResponseBody> {
-            override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
+        // Retrofit을 통해 서버로 데이터 전송
+        RetrofitClient.apiService.sendLocationData(locationData).enqueue(object : Callback<ResultWrapper> {
+            override fun onResponse(call: Call<ResultWrapper>, response: Response<ResultWrapper>) {
                 if (response.isSuccessful) {
-                    Toast.makeText(this@MainActivity, "데이터 전송 성공!", Toast.LENGTH_SHORT).show()
-                    // 서버 응답 처리
+                    // 서버로 데이터 전송 후 연산 결과 가져오기 ResultWrapper
+                    Log.e("MainActivity", "get ResultWrapper From Server!! : ${response.body()}")
+                    val resultWrapper = response.body()
+                    resultWrapper?.let {
+                        // 결과 처리 : RouteChechActivity 로 전달
+                        // 🎈인텐트 구현🎈
+                        val intent = Intent(this@MainActivity, RouteCheckActivity::class.java).apply {
+                            putExtra("minTransferResult", it.minTransferResult)
+                            putExtra("minTimeResult", it.minTimeResult)
+                        }
+                        startActivity(intent)
+                        Log.e("MainActivity", "start RouteCheckActivity!!")
+                    }
                 } else {
-                    Toast.makeText(this@MainActivity, "데이터 전송 실패", Toast.LENGTH_SHORT).show()
-                    // 실패 처리 로직
+                    Toast.makeText(this@MainActivity, "서버로 경로 데이터 전송 실패", Toast.LENGTH_SHORT).show()
                 }
             }
-
-            override fun onFailure(call: Call<ResponseBody>, t: Throwable) {
+            override fun onFailure(call: Call<ResultWrapper>, t: Throwable) {
                 Toast.makeText(this@MainActivity, "네트워크 오류 발생", Toast.LENGTH_SHORT).show()
                 Log.e("MainActivity", "Request failed: ${t.message}")
-                // 네트워크 오류 처리 로직
             }
+
         })
     }
 }
