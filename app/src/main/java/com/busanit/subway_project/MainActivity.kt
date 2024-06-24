@@ -67,7 +67,7 @@ class MainActivity : AppCompatActivity() {
 
         // Retrofit
         val retrofit = Retrofit.Builder()
-            .baseUrl("http://10.100.203.36:8080/")  // 절대 경로만 지정
+            .baseUrl("http://10.100.203.104:8080/")  // 절대 경로만 지정
             .addConverterFactory(GsonConverterFactory.create())
             .build()
         apiService = retrofit.create(ApiService::class.java)
@@ -331,7 +331,6 @@ class MainActivity : AppCompatActivity() {
                 Toast.makeText(this@MainActivity, "네트워크 오류 발생", Toast.LENGTH_SHORT).show()
                 Log.e("MainActivity", "Request failed: ${t.message}")
             }
-
         })
     }
 }

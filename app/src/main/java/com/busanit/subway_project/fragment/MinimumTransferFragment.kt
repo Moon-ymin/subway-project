@@ -11,21 +11,23 @@ import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.busanit.subway_project.R
 import com.busanit.subway_project.RouteCheckActivity
-import com.busanit.subway_project.adapter.StationAdapter
+import com.busanit.subway_project.adapter.StationScheduleAdapter
 import com.busanit.subway_project.alarm.TimerCallback
 import com.busanit.subway_project.databinding.FragmentMinimumTransferBinding
 import com.busanit.subway_project.isEng
 import com.busanit.subway_project.model.Line
-import com.busanit.subway_project.model.Station
+import com.busanit.subway_project.model.StationSchedule
+import com.busanit.subway_project.model.SubwayResult
 import java.util.Calendar
 
 class MinimumTransferFragment : Fragment() {
 
     private lateinit var binding: FragmentMinimumTransferBinding
-    private lateinit var stations: List<Station>
-    private lateinit var allStations: List<Station>
-    private lateinit var intermediateStations: List<Station>
-    private lateinit var adapter: StationAdapter
+    private lateinit var stations: MutableList<StationSchedule>
+    private lateinit var stationList: MutableList<StationSchedule>
+    private lateinit var intermediateStations: MutableList<StationSchedule>
+    private lateinit var adapter: StationScheduleAdapter
+    private var minTransferData: SubwayResult? = null   // 메인으로부터 받은 데이터 값
 
     // 타이머 관련
     private var timer: CountDownTimer? = null
@@ -48,20 +50,25 @@ class MinimumTransferFragment : Fragment() {
 
         super.onViewCreated(view, savedInstanceState)
 
-        // "00분 소요" 텍스트 뷰
-        val time = calculateTime()
-        if (isEng) {
-            binding.timeInfoTextView1.text = "${time}min"
-        } else {
-            binding.timeInfoTextView1.text = "${time}분"
-        }
+        minTransferData = arguments?.getParcelable("minTransferResult")
 
-        // "00개 역 이동" 텍스트 뷰
-        val stations = calculateTotalStations()
-        if (isEng) {
-            binding.totalStationTextView.text = "Travel ${stations} stations"
-        } else {
-            binding.totalStationTextView.text = "${stations}개 역 이동"
+        minTransferData?.let {
+
+            // "00분 소요" 텍스트 뷰
+            val totalTime = it.totalTime
+            if (isEng) {
+                binding.timeInfoTextView1.text = "Around ${totalTime / 60}min"
+            } else {
+                binding.timeInfoTextView1.text = "약 ${totalTime / 60}분"
+            }
+
+            // "00개 역 이동" 텍스트 뷰
+            val size = it.path.size
+            if (isEng) {
+                binding.totalStationTextView.text = "Travel ${size} stations"
+            } else {
+                binding.totalStationTextView.text = "${size}개 역 이동"
+            }
         }
 
         // "출발 시간 설정" : 사용자가 직접 시간 설정
@@ -145,31 +152,11 @@ class MinimumTransferFragment : Fragment() {
             activity.setTimerRunning(true)
             }
 
-        // 리사이클러 뷰
         setUpRecyclerView()
     }
 
-    // 총 소요 시간 계산 메서드
-    private fun calculateTime(): Int {
-        return 6;
-    }
-
-    // 중간역 총 개수 계산 메서드
-    private fun calculateTotalStations(): Int {
-        return 4;
-    }
-
-    // 출발역 | 중간역 | 도착역 리사이클러 뷰 세팅
+    // 출발역 | 경유역 | 도착역 리사이클러 뷰 세팅
     private fun setUpRecyclerView() {
-
-        allStations = listOf(
-            Station(100, "금련산역", Line(1, "1호선"), 0),
-            Station(101, "남천역", Line(2, "1호선"), 0),
-            Station(102, "경성대부경대역", Line(3, "1호선"), 0),
-            Station(103, "대연역", Line(4, "1호선"), 0),
-            Station(104, "못골역", Line(8, "2호선"), 0),
-            Station(105, "지게골역", Line(9, "2호선"), 0)
-        )
 
         // 영어 설정
         if (isEng) {
@@ -179,9 +166,43 @@ class MinimumTransferFragment : Fragment() {
             binding.arrivedTimeIs.text = "The estimated arrival time is   "
         }
 
-        // 출발역 설정
-        binding.startStationTextView.text = allStations.first().sname
-        when (allStations.first().line.lineCd) {
+        stationList = mutableListOf<StationSchedule>()
+
+        minTransferData?.let {
+            for (path in it.path) {
+
+                val pathSplit = path.split("|")
+
+                val scode = pathSplit[0]    // 역 코드
+                val sname = pathSplit[1]    // 역 이름
+                val line = pathSplit[2]     // 호선
+
+                var lineName = ""
+                if (line.toInt() == 1) {
+                    lineName = "1호선"
+                } else if (line.toInt() == 2) {
+                    lineName = "2호선"
+                } else if (line.toInt() == 3) {
+                    lineName = "3호선"
+                } else if (line.toInt() == 4) {
+                    lineName = "4호선"
+                } else if (line.toInt() == 8) {
+                    lineName = "동해선"
+                } else {
+                    lineName = "부산김해경전철"
+                }
+
+                val lineCd = Line(line.toInt(), lineName)   // Line 객체 생성
+
+                val stnSchedule = StationSchedule(scode.toInt(), sname, lineCd) // StationSchedule 객체 생성
+
+                stationList.add(stnSchedule)    // stationList에 추가
+            }
+        }
+
+        // 1. 출발역 설정
+        binding.startStationTextView.text = stationList.first().sname
+        when (stationList.first().line.lineCd) {
             1 -> binding.startStationLineTextView.apply {
                 this.setBackgroundResource(R.drawable.image_line1_orange)
                 this.setText("1")
@@ -214,11 +235,12 @@ class MinimumTransferFragment : Fragment() {
 
 //      //////////////////////////////////////////////////////////////////////
 
-        intermediateStations = allStations.subList(1, allStations.size - 1)
+        // 2. 경유역 설정
+        intermediateStations = stationList.subList(1, stationList.size - 1)
 
-        stations = listOf()
+        stations = mutableListOf()
 
-        adapter = StationAdapter(stations)
+        adapter = StationScheduleAdapter(stations)
 
         binding.recyclerViewStations.layoutManager = LinearLayoutManager(context)
         binding.recyclerViewStations.adapter = adapter
@@ -232,7 +254,7 @@ class MinimumTransferFragment : Fragment() {
                 binding.recyclerViewStations.visibility = View.VISIBLE
             } else {
                 // 중간 역 숨기기
-                stations = listOf()
+                stations = mutableListOf()
                 binding.recyclerViewStations.visibility = View.GONE
             }
             adapter.updateStations(stations)
@@ -240,9 +262,9 @@ class MinimumTransferFragment : Fragment() {
 
 //      //////////////////////////////////////////////////////////////////////
 
-        // 도착역 설정
-        binding.endStationText.text = allStations.last().sname
-        when (allStations.last().line.lineCd) {
+        // 3. 도착역 설정
+        binding.endStationText.text = stationList.last().sname
+        when (stationList.last().line.lineCd) {
             1 -> binding.endStationLineTextView.apply {
                 this.setBackgroundResource(R.drawable.image_line1_orange)
                 this.setText("1")

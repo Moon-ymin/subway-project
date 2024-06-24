@@ -1,41 +1,34 @@
 package com.busanit.subway_project.adapter
 
 import android.annotation.SuppressLint
-import android.content.Context
 import android.view.LayoutInflater
-import android.view.View
 import android.view.ViewGroup
-import android.widget.Button
-import android.widget.ImageView
-import android.widget.LinearLayout
 import android.widget.TextView
-import android.widget.Toast
-import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
 import com.busanit.subway_project.R
-import com.busanit.subway_project.databinding.ItemStationBinding
-import com.busanit.subway_project.model.Station
+import com.busanit.subway_project.databinding.ItemStationScheduleBinding
+import com.busanit.subway_project.model.StationSchedule
 
-class StationAdapter(private var stations: List<Station>) : RecyclerView.Adapter<StationAdapter.StationViewHolder>() {
+class StationScheduleAdapter(private var stationSchedules: List<StationSchedule>) : RecyclerView.Adapter<StationScheduleAdapter.StationScheduleViewHolder>() {
 
-    inner class StationViewHolder(private val binding: ItemStationBinding) : RecyclerView.ViewHolder(binding.root) {
+    inner class StationScheduleViewHolder(private val binding: ItemStationScheduleBinding) : RecyclerView.ViewHolder(binding.root) {
 
         private val textViewStationName: TextView = itemView.findViewById(R.id.textViewStationName)
 
-        fun bind(station: Station) {
+        fun bind(station: StationSchedule) {
             textViewStationName.text = station.sname
         }
     }
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): StationViewHolder {
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): StationScheduleViewHolder {
 
-        val binding = ItemStationBinding.inflate(LayoutInflater.from(parent.context), parent, false)
+        val binding = ItemStationScheduleBinding.inflate(LayoutInflater.from(parent.context), parent, false)
 
-        return StationViewHolder(binding)
+        return StationScheduleViewHolder(binding)
     }
 
-    override fun onBindViewHolder(holder: StationViewHolder, position: Int) {
-        val station = stations[position]
+    override fun onBindViewHolder(holder: StationScheduleViewHolder, position: Int) {
+        val station = stationSchedules[position]
 
         when (station.line.lineCd) {
             1 -> {
@@ -70,18 +63,18 @@ class StationAdapter(private var stations: List<Station>) : RecyclerView.Adapter
             }
         }
 
-        holder.bind(stations[position])
+        holder.bind(stationSchedules[position])
     }
 
     override fun getItemCount(): Int {
 
-        return stations.size
+        return stationSchedules.size
     }
 
     @SuppressLint("NotifyDataSetChanged")
-    fun updateStations(newStations: List<Station>) {
+    fun updateStations(newStations: List<StationSchedule>) {
 
-        stations = newStations
+        stationSchedules = newStations
 
         notifyDataSetChanged()
     }
