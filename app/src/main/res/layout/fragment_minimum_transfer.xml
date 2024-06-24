@@ -144,7 +144,7 @@
                     <!-- 중간역 -->
                     <ToggleButton
                         android:id="@+id/transitStnToggleBnt"
-                        android:layout_width="350dp"
+                        android:layout_width="355dp"
                         android:layout_height="35dp"
                         android:background="@drawable/toggle"
                         android:textColor="#FF616161"
