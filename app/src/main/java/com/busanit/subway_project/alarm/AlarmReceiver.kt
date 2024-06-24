@@ -24,10 +24,10 @@ class AlarmReceiver : BroadcastReceiver() {
         // 진동 알람
         val vibrator = context.getSystemService(Context.VIBRATOR_SERVICE) as Vibrator
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            val vibrationEffect = VibrationEffect.createOneShot(1000, VibrationEffect.DEFAULT_AMPLITUDE)
+            val vibrationEffect = VibrationEffect.createOneShot(500, VibrationEffect.DEFAULT_AMPLITUDE)
             vibrator.vibrate(vibrationEffect)
         } else {
-            vibrator.vibrate(1000)
+            vibrator.vibrate(500)
         }
 
         // 소리 알람
@@ -57,7 +57,7 @@ class AlarmReceiver : BroadcastReceiver() {
         )
 
         val notificationBuilder = NotificationCompat.Builder(context, channelId)
-            .setSmallIcon(R.drawable.alarm)
+            .setSmallIcon(R.drawable.bsp_app_icon_round)
             .setContentTitle("타이머 알림")
             .setContentText("타이머가 종료됐습니다. 시간을 확인하세요!")
             .setPriority(NotificationCompat.PRIORITY_HIGH)
