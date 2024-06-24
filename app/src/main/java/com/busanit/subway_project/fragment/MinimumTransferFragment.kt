@@ -27,7 +27,7 @@ class MinimumTransferFragment : Fragment() {
     private lateinit var stationList: MutableList<StationSchedule>
     private lateinit var intermediateStations: MutableList<StationSchedule>
     private lateinit var adapter: StationScheduleAdapter
-    private var minTransferData: SubwayResult? = null   // 메인으로부터 받은 데이터 값
+    private var minTransferData: SubwayResult? = null   // 메인 액티비티로부터 받은 데이터 값
 
     // 타이머 관련
     private var timer: CountDownTimer? = null
@@ -52,10 +52,11 @@ class MinimumTransferFragment : Fragment() {
 
         minTransferData = arguments?.getParcelable("minTransferResult")
 
+        var totalTime = 0   // "00분 소요" 텍스트 뷰 및 타이머 설정을 위한 값
         minTransferData?.let {
 
             // "00분 소요" 텍스트 뷰
-            val totalTime = it.totalTime
+            totalTime = it.totalTime
             if (isEng) {
                 binding.timeInfoTextView1.text = "Around ${totalTime / 60}min"
             } else {
@@ -120,14 +121,8 @@ class MinimumTransferFragment : Fragment() {
 
             timer?.cancel() // 기존 타이머가 있다면 취소
 
-//            intent.extras?.let {
-//                totalSeconds = it.getInt(MainActivity.EXTRA_MINUTES, 0)
-//            }
-
-            var totalSeconds = 10   // 임의의 초
-
             // CountDownTimer 설정
-            timer = object : CountDownTimer((totalSeconds * 1000).toLong(), 1000) {
+            timer = object : CountDownTimer((totalTime * 1000).toLong(), 1000) {
 
                 override fun onTick(millisUntilFinished: Long) {
                     // 매 초마다 호출
@@ -152,6 +147,7 @@ class MinimumTransferFragment : Fragment() {
             activity.setTimerRunning(true)
             }
 
+        // 리사이클러 뷰 동작
         setUpRecyclerView()
     }
 
@@ -229,7 +225,7 @@ class MinimumTransferFragment : Fragment() {
             }
         }
 
-        // "지금 가장 빠른 열차는 00:00" 시간 설정
+        // 📌 "지금 가장 빠른 열차는 00:00" 시간 설정
         val startTime: String = setTime("13:50:00");
         binding.startTimeTextView.text = startTime
 
@@ -291,7 +287,7 @@ class MinimumTransferFragment : Fragment() {
             }
         }
 
-        // "도착 예정 시간은 00:00" 시간 설정
+        // 📌 "도착 예정 시간은 00:00" 시간 설정
         val endTime: String = setTime("14:00:00")
         binding.endTimeTextView.text = endTime
     }
