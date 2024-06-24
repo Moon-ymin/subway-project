@@ -132,7 +132,7 @@ class RouteCheckActivity : AppCompatActivity(), TimerCallback {
 
         // 상단바 알림
         val notification = NotificationCompat.Builder(this, CHANNEL_ID)
-            .setSmallIcon(R.drawable.train)
+            .setSmallIcon(R.drawable.bsp_app_icon_round)
             .setContentTitle("타이머 종료")
             .setContentText("역에 도착했습니다!")
             .setPriority(NotificationCompat.PRIORITY_HIGH)
