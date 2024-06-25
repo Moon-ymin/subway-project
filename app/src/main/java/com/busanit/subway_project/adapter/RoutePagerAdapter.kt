@@ -11,8 +11,8 @@ import com.busanit.subway_project.model.SubwayResult
 class RoutePagerAdapter {
 
     class RoutePagerAdapter(fa: FragmentActivity,
-                            private val minTransferData: SubwayResult?,
                             private val minTimeResultData: SubwayResult?,
+                            private val minTransferData: SubwayResult?,
                             private val from: Int,
                             private val via: Int,
                             private val to: Int)
@@ -22,19 +22,19 @@ class RoutePagerAdapter {
 
         override fun createFragment(position: Int): Fragment {
             val fragment = if (position == 0) {
-                MinimumTransferFragment()
-            } else {
                 ShortestTimeFragment()
+            } else {
+                MinimumTransferFragment()
             }
 
             val bundle = Bundle().apply {
                 if (position == 0) {
-                    putParcelable("minTransferResult", minTransferData)
+                    putParcelable("minTimeResult", minTimeResultData)
                     putInt("from", from)
                     putInt("via", via)
                     putInt("to", to)
                 } else {
-                    putParcelable("minTimeResult", minTimeResultData)
+                    putParcelable("minTransferResult", minTransferData)
                     putInt("from", from)
                     putInt("via", via)
                     putInt("to", to)

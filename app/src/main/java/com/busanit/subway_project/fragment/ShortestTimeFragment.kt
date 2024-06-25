@@ -42,7 +42,7 @@ class ShortestTimeFragment : Fragment() {
     private lateinit var stationList: MutableList<StationSchedule>
     private lateinit var intermediateStations: MutableList<StationSchedule>
     private lateinit var adapter: StationScheduleAdapter
-    private var minTransferData: SubwayResult? = null   // 메인 액티비티로부터 받은 데이터 값
+    private var minTimeData: SubwayResult? = null   // 메인 액티비티로부터 받은 데이터 값
     private var arrive_time: String? = null     // 도착 시간 "HH:MM:SS"
 
     // 타이머 관련
@@ -67,13 +67,13 @@ class ShortestTimeFragment : Fragment() {
 
         super.onViewCreated(view, savedInstanceState)
 
-        minTransferData = arguments?.getParcelable("minTransferResult")
+        minTimeData = arguments?.getParcelable("minTimeResult")
         val from: Int? = arguments?.getInt("from")
         val via: Int? = arguments?.getInt("via")
         val to: Int? = arguments?.getInt("to")
 
         var totalTime = 0   // "00분 소요" 텍스트 뷰 및 타이머 설정을 위한 값
-        minTransferData?.let {
+        minTimeData?.let {
 
             // "00분 소요" 텍스트 뷰
             totalTime = it.totalTime
@@ -151,7 +151,7 @@ class ShortestTimeFragment : Fragment() {
 
             // CountDownTimer
             // 1. "HH:MM:SS" 형식의 문자열을 LocalTime 객체로 변환
-            arrive_time = minTransferData!!.path.get(minTransferData!!.path.size -1).split("|")[3]      // 도착 시간 "HH:MM:SS"
+            arrive_time = minTimeData!!.path.get(minTimeData!!.path.size -1).split("|")[3]      // 도착 시간 "HH:MM:SS"
 
             val formatter = DateTimeFormatter.ofPattern("HH:mm:ss")
             val inputTime = LocalTime.parse(arrive_time, formatter)
@@ -204,7 +204,7 @@ class ShortestTimeFragment : Fragment() {
 
         stationList = mutableListOf<StationSchedule>()
 
-        minTransferData?.let {
+        minTimeData?.let {
             for (path in it.path) {
 
                 val pathSplit = path.split("|")
@@ -286,7 +286,7 @@ class ShortestTimeFragment : Fragment() {
         }
 
         // 📌 "지금 가장 빠른 열차는 00:00" 시간 설정
-        minTransferData?.let {
+        minTimeData?.let {
 
             val pathSplit = it.path[0].split("|")
 
@@ -365,7 +365,7 @@ class ShortestTimeFragment : Fragment() {
         }
 
         // 📌 "도착 예정 시간은 00:00" 시간 설정
-        minTransferData?.let {
+        minTimeData?.let {
 
             val pathSplit = it.path[it.path.size - 1].split("|")
 

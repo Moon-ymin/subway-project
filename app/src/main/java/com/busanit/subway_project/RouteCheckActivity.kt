@@ -63,7 +63,7 @@ class RouteCheckActivity : AppCompatActivity(), TimerCallback {
         val viewPager = findViewById<ViewPager2>(R.id.viewPager)
         val backToMainButton = findViewById<Button>(R.id.backToMainButton)
 
-        val adapter = RoutePagerAdapter.RoutePagerAdapter(this, minTransferData, minTimeData, from, via, to)
+        val adapter = RoutePagerAdapter.RoutePagerAdapter(this, minTimeData, minTransferData, from, via, to)
         viewPager.adapter = adapter
 
         // 최단시간 | 최소환승 탭 구현
@@ -198,40 +198,5 @@ class RouteCheckActivity : AppCompatActivity(), TimerCallback {
                 }
             }
         }
-    }
-
-    public fun sendLocationDataToServer(from: Int, via: Int, to: Int, settingTime: String) {
-        // 서버에 전송할 데이터 객체 생성
-        val locationData = LocationData(from, via, to, settingTime)
-
-        // Retrofit을 통해 서버로 데이터 전송
-        RetrofitClient.apiService.sendLocationData(locationData).enqueue(object : Callback<ResultWrapper> {
-            override fun onResponse(call: Call<ResultWrapper>, response: Response<ResultWrapper>) {
-                if (response.isSuccessful) {
-                    // 서버로 데이터 전송 후 연산 결과 가져오기 ResultWrapper
-                    Log.e("MainActivity", "get ResultWrapper From Server!! : ${response.body()}")
-                    val resultWrapper = response.body()
-                    resultWrapper?.let {
-                        // 결과 처리 : RouteChechActivity 로 전달
-                        // 🎈인텐트 구현🎈
-                        val intent = Intent(this@RouteCheckActivity, RouteCheckActivity::class.java).apply {
-                            putExtra("minTransferResult", it.minTransferResult)
-                            putExtra("minTimeResult", it.minTimeResult)
-                            putExtra("from", from)
-                            putExtra("via", via)
-                            putExtra("to", to)
-                        }
-                        startActivity(intent)
-                        Log.e("MainActivity", "start RouteCheckActivity!!")
-                    }
-                } else {
-                    Toast.makeText(this@RouteCheckActivity, "서버로 경로 데이터 전송 실패", Toast.LENGTH_SHORT).show()
-                }
-            }
-            override fun onFailure(call: Call<ResultWrapper>, t: Throwable) {
-                Toast.makeText(this@RouteCheckActivity, "네트워크 오류 발생", Toast.LENGTH_SHORT).show()
-                Log.e("MainActivity", "Request failed: ${t.message}")
-            }
-        })
     }
 }
