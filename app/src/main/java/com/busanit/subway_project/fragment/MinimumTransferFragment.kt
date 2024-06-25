@@ -185,7 +185,7 @@ class MinimumTransferFragment : Fragment() {
             // 타이머 시작
             (timer as CountDownTimer).start()
             activity.setTimerRunning(true)
-            }
+        }
 
         // 리사이클러 뷰 동작
         setUpRecyclerView()
