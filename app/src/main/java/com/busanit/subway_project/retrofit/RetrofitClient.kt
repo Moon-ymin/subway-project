@@ -6,7 +6,8 @@ import retrofit2.converter.gson.GsonConverterFactory
 object RetrofitClient {
 
     // private const val BASE_URL = "http://192.168.45.165:8080/" // 영민 집에서 테스트 할 때
-    private const val BASE_URL = "http://10.100.203.104:8080/" // 영민 학원에서 테스트 할 떄
+    // private const val BASE_URL = "http://10.100.203.104:8080/" // 에스더 학원에서 테스트 할 떄
+    private const val BASE_URL = "http://10.100.203.36:8080/" // 영민 학원에서 테스트 할 떄
 
     val stationService: StationAPIService by lazy {
         // Retrofit 객체 생성
