@@ -1,7 +1,14 @@
 package com.busanit.subway_project.model
 
-data class StationSchedule (
-    val scode: Int,
-    val sname: String,
-    val line: Line,
-)
+sealed class StationSchedule {
+
+    data class Schedule (
+        val scode: Int,
+        val sname: String,
+        val line: Line,
+    ): StationSchedule()
+
+    data class Walking (
+        val notice: String
+    ): StationSchedule()
+}

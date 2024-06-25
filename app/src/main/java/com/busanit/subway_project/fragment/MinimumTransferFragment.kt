@@ -190,38 +190,57 @@ class MinimumTransferFragment : Fragment() {
 
                 val lineCd = Line(line.toInt(), lineName)   // Line 객체 생성
 
-                val stnSchedule = StationSchedule(scode.toInt(), sname, lineCd) // StationSchedule 객체 생성
+                val stnSchedule = StationSchedule.Schedule(scode.toInt(), sname, lineCd) // StationSchedule 객체 생성
+
+                if (stationList.size > 0) {
+
+                    val previous = stationList.last() // 마지막 요소를 가져옴
+
+                    if (previous is StationSchedule.Schedule && previous.sname == sname) {
+                        stationList.add(StationSchedule.Walking("도보"))
+                    }
+                }
 
                 stationList.add(stnSchedule)    // stationList에 추가
             }
         }
 
         // 1. 출발역 설정
-        binding.startStationTextView.text = stationList.first().sname
-        when (stationList.first().line.lineCd) {
-            1 -> binding.startStationLineTextView.apply {
-                this.setBackgroundResource(R.drawable.image_line1_orange)
-                this.setText("1")
-            }
-            2 -> binding.startStationLineTextView.apply {
-                this.setBackgroundResource(R.drawable.image_line2_green)
-                this.setText("2")
-            }
-            3 -> binding.startStationLineTextView.apply {
-                this.setBackgroundResource(R.drawable.image_line3_brown)
-                this.setText("3")
-            }
-            4 -> binding.startStationLineTextView.apply {
-                this.setBackgroundResource(R.drawable.image_line4_blue)
-                this.setText("4")
-            }
-            8 -> binding.startStationLineTextView.apply {
-                this.setBackgroundResource(R.drawable.image_line8_sky)
-                this.setText("동")
-            }
-            else -> binding.startStationLineTextView.apply {
-                this.setBackgroundResource(R.drawable.image_line9_purple)
-                this.setText("김")
+        if (stationList.first() is StationSchedule.Schedule) {
+
+            val firstStation = stationList.first() as StationSchedule.Schedule
+            binding.startStationTextView.text = firstStation.sname
+
+            when (firstStation.line.lineCd) {
+                1 -> binding.startStationLineTextView.apply {
+                    this.setBackgroundResource(R.drawable.image_line1_orange)
+                    this.setText("1")
+                }
+
+                2 -> binding.startStationLineTextView.apply {
+                    this.setBackgroundResource(R.drawable.image_line2_green)
+                    this.setText("2")
+                }
+
+                3 -> binding.startStationLineTextView.apply {
+                    this.setBackgroundResource(R.drawable.image_line3_brown)
+                    this.setText("3")
+                }
+
+                4 -> binding.startStationLineTextView.apply {
+                    this.setBackgroundResource(R.drawable.image_line4_blue)
+                    this.setText("4")
+                }
+
+                8 -> binding.startStationLineTextView.apply {
+                    this.setBackgroundResource(R.drawable.image_line8_sky)
+                    this.setText("동")
+                }
+
+                else -> binding.startStationLineTextView.apply {
+                    this.setBackgroundResource(R.drawable.image_line9_purple)
+                    this.setText("김")
+                }
             }
         }
 
@@ -259,31 +278,41 @@ class MinimumTransferFragment : Fragment() {
 //      //////////////////////////////////////////////////////////////////////
 
         // 3. 도착역 설정
-        binding.endStationText.text = stationList.last().sname
-        when (stationList.last().line.lineCd) {
-            1 -> binding.endStationLineTextView.apply {
-                this.setBackgroundResource(R.drawable.image_line1_orange)
-                this.setText("1")
-            }
-            2 -> binding.endStationLineTextView.apply {
-                this.setBackgroundResource(R.drawable.image_line2_green)
-                this.setText("2")
-            }
-            3 -> binding.endStationLineTextView.apply {
-                this.setBackgroundResource(R.drawable.image_line3_brown)
-                this.setText("3")
-            }
-            4 -> binding.endStationLineTextView.apply {
-                this.setBackgroundResource(R.drawable.image_line4_blue)
-                this.setText("4")
-            }
-            8 -> binding.endStationLineTextView.apply {
-                this.setBackgroundResource(R.drawable.image_line8_sky)
-                this.setText("동")
-            }
-            else -> binding.endStationLineTextView.apply {
-                this.setBackgroundResource(R.drawable.image_line9_purple)
-                this.setText("김")
+        if (stationList.last() is StationSchedule.Schedule) {
+
+            val lastStation = stationList.last() as StationSchedule.Schedule
+            binding.endStationText.text = lastStation.sname
+
+            when (lastStation.line.lineCd) {
+                1 -> binding.endStationLineTextView.apply {
+                    this.setBackgroundResource(R.drawable.image_line1_orange)
+                    this.setText("1")
+                }
+
+                2 -> binding.endStationLineTextView.apply {
+                    this.setBackgroundResource(R.drawable.image_line2_green)
+                    this.setText("2")
+                }
+
+                3 -> binding.endStationLineTextView.apply {
+                    this.setBackgroundResource(R.drawable.image_line3_brown)
+                    this.setText("3")
+                }
+
+                4 -> binding.endStationLineTextView.apply {
+                    this.setBackgroundResource(R.drawable.image_line4_blue)
+                    this.setText("4")
+                }
+
+                8 -> binding.endStationLineTextView.apply {
+                    this.setBackgroundResource(R.drawable.image_line8_sky)
+                    this.setText("동")
+                }
+
+                else -> binding.endStationLineTextView.apply {
+                    this.setBackgroundResource(R.drawable.image_line9_purple)
+                    this.setText("김")
+                }
             }
         }
 
