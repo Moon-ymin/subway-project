@@ -49,6 +49,7 @@ class StationScheduleAdapter(private var stationSchedules: List<StationSchedule>
     inner class ScheduleViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
 
         private val textViewStationName: TextView = itemView.findViewById(R.id.textViewStationName)
+        private val textViewSubwayTime: TextView = itemView.findViewById(R.id.textViewSubwayTime)
 
         fun bind(station: StationSchedule.Schedule) {
             textViewStationName.text = station.sname
@@ -85,6 +86,8 @@ class StationScheduleAdapter(private var stationSchedules: List<StationSchedule>
                     textView.setText("김")
                 }
             }
+
+            textViewSubwayTime.text = station.time
         }
     }
 

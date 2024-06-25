@@ -26,4 +26,16 @@
         android:paddingStart="8dp"
         android:fontFamily="@font/pretendardmedium"/>
 
+    <TextView
+        android:id="@+id/textViewSubwayTime"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:text="Train Time"
+        android:textAppearance="?attr/textAppearanceListItem"
+        android:paddingStart="2dp"
+        android:textSize="11dp"
+        android:textColor="#7E7E7E"
+        android:fontFamily="@font/pretendardmedium"/>
+
 </LinearLayout>

@@ -6,6 +6,7 @@ sealed class StationSchedule {
         val scode: Int,
         val sname: String,
         val line: Line,
+        val time: String
     ): StationSchedule()
 
     data class Walking (
