@@ -4,6 +4,7 @@ import DBHelper
 import android.app.SearchManager
 import android.content.Intent
 import android.graphics.drawable.ColorDrawable
+import android.os.Build
 import android.os.Bundle
 import android.util.Log
 import android.view.Gravity
@@ -17,6 +18,7 @@ import android.widget.Button
 import android.widget.PopupWindow
 import android.widget.TextView
 import android.widget.Toast
+import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.SearchView
 import androidx.appcompat.widget.Toolbar
@@ -29,14 +31,20 @@ import com.busanit.subway_project.retrofit.ApiService
 import com.busanit.subway_project.retrofit.RetrofitClient
 import com.github.angads25.toggle.widget.LabeledSwitch
 import com.github.chrisbanes.photoview.PhotoView
-import okhttp3.ResponseBody
 import retrofit2.Callback
 import retrofit2.Call
 import retrofit2.Response
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
+import java.time.LocalTime
+import java.time.format.DateTimeFormatter
 
 public var isEng = false   // 한 영 버전 여부 플래그
+public var from = 0
+public var via = 0
+public var to = 0
+@RequiresApi(Build.VERSION_CODES.O)
+public var settingTime = LocalTime.now().format(DateTimeFormatter.ISO_LOCAL_TIME)
 
 class MainActivity : AppCompatActivity() {
 
@@ -46,11 +54,7 @@ class MainActivity : AppCompatActivity() {
     private lateinit var locabutton: Button
     private lateinit var apiService: ApiService // Retrofit 인터페이스를 사용할 변수
 
-    // 출발, 경유, 도착 (scode) 설정
-    private var from = 0
-    private var via = 0
-    private var to = 0
-
+    @RequiresApi(Build.VERSION_CODES.O)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
@@ -67,7 +71,7 @@ class MainActivity : AppCompatActivity() {
 
         // Retrofit
         val retrofit = Retrofit.Builder()
-            .baseUrl("http://10.100.203.36:8080/")  // 절대 경로만 지정
+            .baseUrl("http://10.100.203.104:8080/")  // 절대 경로만 지정
             .addConverterFactory(GsonConverterFactory.create())
             .build()
         apiService = retrofit.create(ApiService::class.java)
@@ -83,7 +87,7 @@ class MainActivity : AppCompatActivity() {
                 Toast.makeText(this@MainActivity, "도착지를 선택해주세요", Toast.LENGTH_SHORT).show()
             } else {
                 // Toast.makeText(this@MainActivity, "경로 찾기!", Toast.LENGTH_SHORT).show()
-                sendLocationDataToServer(from, via, to)
+                sendLocationDataToServer(from, via, to, settingTime)
             }
         }
 
@@ -106,7 +110,6 @@ class MainActivity : AppCompatActivity() {
                 handleImageClick(absoluteX, absoluteY)
             }
         }
-
     }
 
     // 상단바 설정
@@ -150,7 +153,6 @@ class MainActivity : AppCompatActivity() {
             override fun onQueryTextChange(newText: String?): Boolean {
                 return false
             }
-
         })
 
         // 토글 버튼 설정
@@ -302,9 +304,9 @@ class MainActivity : AppCompatActivity() {
     }
 
     // 출발, 경유, 도착 정보를 서버에 전송하는 메서드
-    private fun sendLocationDataToServer(from: Int, via: Int, to: Int) {
+    private fun sendLocationDataToServer(from: Int, via: Int, to: Int, settingTime: String) {
         // 서버에 전송할 데이터 객체 생성
-        val locationData = LocationData(from, via, to)
+        val locationData = LocationData(from, via, to, settingTime)
 
         // Retrofit을 통해 서버로 데이터 전송
         RetrofitClient.apiService.sendLocationData(locationData).enqueue(object : Callback<ResultWrapper> {
@@ -319,6 +321,9 @@ class MainActivity : AppCompatActivity() {
                         val intent = Intent(this@MainActivity, RouteCheckActivity::class.java).apply {
                             putExtra("minTransferResult", it.minTransferResult)
                             putExtra("minTimeResult", it.minTimeResult)
+                            putExtra("from", from)
+                            putExtra("via", via)
+                            putExtra("to", to)
                         }
                         startActivity(intent)
                         Log.e("MainActivity", "start RouteCheckActivity!!")

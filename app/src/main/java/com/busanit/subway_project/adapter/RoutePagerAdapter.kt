@@ -12,7 +12,10 @@ class RoutePagerAdapter {
 
     class RoutePagerAdapter(fa: FragmentActivity,
                             private val minTransferData: SubwayResult?,
-                            private val minTimeResultData: SubwayResult?)
+                            private val minTimeResultData: SubwayResult?,
+                            private val from: Int,
+                            private val via: Int,
+                            private val to: Int)
         : FragmentStateAdapter(fa) {
 
         override fun getItemCount(): Int = 2    // "최소환승"과 "최단시간" 두 개의 페이지
@@ -27,8 +30,14 @@ class RoutePagerAdapter {
             val bundle = Bundle().apply {
                 if (position == 0) {
                     putParcelable("minTransferResult", minTransferData)
+                    putInt("from", from)
+                    putInt("via", via)
+                    putInt("to", to)
                 } else {
                     putParcelable("minTimeResult", minTimeResultData)
+                    putInt("from", from)
+                    putInt("via", via)
+                    putInt("to", to)
                 }
             }
             fragment.arguments = bundle

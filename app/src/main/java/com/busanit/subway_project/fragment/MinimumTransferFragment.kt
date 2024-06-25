@@ -2,13 +2,19 @@ package com.busanit.subway_project.fragment
 
 import android.app.TimePickerDialog
 import android.content.Context
+import android.content.Intent
+import android.os.Build
 import android.os.Bundle
 import android.os.CountDownTimer
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
+import androidx.annotation.RequiresApi
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.busanit.subway_project.MainActivity
 import com.busanit.subway_project.R
 import com.busanit.subway_project.RouteCheckActivity
 import com.busanit.subway_project.adapter.StationScheduleAdapter
@@ -16,9 +22,18 @@ import com.busanit.subway_project.alarm.TimerCallback
 import com.busanit.subway_project.databinding.FragmentMinimumTransferBinding
 import com.busanit.subway_project.isEng
 import com.busanit.subway_project.model.Line
+import com.busanit.subway_project.model.LocationData
+import com.busanit.subway_project.model.ResultWrapper
 import com.busanit.subway_project.model.StationSchedule
 import com.busanit.subway_project.model.SubwayResult
+import com.busanit.subway_project.retrofit.RetrofitClient
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
+import java.time.LocalTime
+import java.time.format.DateTimeFormatter
 import java.util.Calendar
+import java.time.Duration
 
 class MinimumTransferFragment : Fragment() {
 
@@ -28,6 +43,7 @@ class MinimumTransferFragment : Fragment() {
     private lateinit var intermediateStations: MutableList<StationSchedule>
     private lateinit var adapter: StationScheduleAdapter
     private var minTransferData: SubwayResult? = null   // 메인 액티비티로부터 받은 데이터 값
+    private var arrive_time: String? = null     // 도착 시간 "HH:MM:SS"
 
     // 타이머 관련
     private var timer: CountDownTimer? = null
@@ -46,11 +62,15 @@ class MinimumTransferFragment : Fragment() {
         return view
     }
 
+    @RequiresApi(Build.VERSION_CODES.O)
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
 
         super.onViewCreated(view, savedInstanceState)
 
         minTransferData = arguments?.getParcelable("minTransferResult")
+        val from: Int? = arguments?.getInt("from")
+        val via: Int? = arguments?.getInt("via")
+        val to: Int? = arguments?.getInt("to")
 
         var totalTime = 0   // "00분 소요" 텍스트 뷰 및 타이머 설정을 위한 값
         minTransferData?.let {
@@ -76,6 +96,7 @@ class MinimumTransferFragment : Fragment() {
         if (isEng) {
             binding.setTime.text = "Set Departure Time"
         }
+
         binding.setTime.setOnClickListener {
 
             val calendar = Calendar.getInstance()
@@ -85,19 +106,26 @@ class MinimumTransferFragment : Fragment() {
             val timePickerDialog = TimePickerDialog(
                 requireContext(),
                 { _, selectedHour, selectedMinute ->
-                    val selectedTime = String.format("%02d : %02d", selectedHour, selectedMinute)
+                    val selectedTime = String.format("%02d:%02d", selectedHour, selectedMinute)
 
                     if (isEng) {
                         binding.setTime.text = "Departure Time : ${selectedTime}"
                     } else {
                         binding.setTime.text = "출발 시간 : ${selectedTime}"
                     }
+
+                    val selectedLocalTime = LocalTime.of(selectedHour, selectedMinute)
+                    Log.d("TimeCheck", "Selected Time: $selectedLocalTime")
+
+                    if (from != null && via != null && to != null) {
+                        sendLocationDataToServer(from, via, to, selectedTime)
+                    }
                 },
                 hour,
                 minute,
                 true
             )
-            timePickerDialog.show()
+            timePickerDialog?.show()
         }
 
         // "타이머 설정" 버튼
@@ -121,13 +149,25 @@ class MinimumTransferFragment : Fragment() {
 
             timer?.cancel() // 기존 타이머가 있다면 취소
 
-            // CountDownTimer 설정
-            timer = object : CountDownTimer((totalTime * 1000).toLong(), 1000) {
+            // CountDownTimer
+            // 1. "HH:MM:SS" 형식의 문자열을 LocalTime 객체로 변환
+            arrive_time = minTransferData!!.path.get(minTransferData!!.path.size -1).split("|")[3]      // 도착 시간 "HH:MM:SS"
+
+            val formatter = DateTimeFormatter.ofPattern("HH:mm:ss")
+            val inputTime = LocalTime.parse(arrive_time, formatter)
+
+            // 2. 현재 시간을 가져오기
+            val now = LocalTime.now()
+
+            // 3. 두 LocalTime 객체 간의 차이 계산(초 단위)
+            val duration = Duration.between(inputTime, now).abs().seconds
+
+            timer = object : CountDownTimer(duration * 1000, 1000) {  // duration을 밀리초 단위로 변환
 
                 override fun onTick(millisUntilFinished: Long) {
                     // 매 초마다 호출
                     val hoursRemaining = millisUntilFinished / 1000 / 3600
-                    val minutesRemaining = millisUntilFinished / 1000 / 60
+                    val minutesRemaining = (millisUntilFinished / 1000 % 3600) / 60
                     val secondsRemaining = (millisUntilFinished / 1000) % 60
 
                     // 버튼의 텍스트("타이머 설정")를 남은 시간으로 업데이트
@@ -172,6 +212,7 @@ class MinimumTransferFragment : Fragment() {
                 val scode = pathSplit[0]    // 역 코드
                 val sname = pathSplit[1]    // 역 이름
                 val line = pathSplit[2]     // 호선
+                val time = pathSplit[3]
 
                 var lineName = ""
                 if (line.toInt() == 1) {
@@ -190,7 +231,7 @@ class MinimumTransferFragment : Fragment() {
 
                 val lineCd = Line(line.toInt(), lineName)   // Line 객체 생성
 
-                val stnSchedule = StationSchedule.Schedule(scode.toInt(), sname, lineCd) // StationSchedule 객체 생성
+                val stnSchedule = StationSchedule.Schedule(scode.toInt(), sname, lineCd, time) // StationSchedule 객체 생성
 
                 if (stationList.size > 0) {
 
@@ -245,8 +286,15 @@ class MinimumTransferFragment : Fragment() {
         }
 
         // 📌 "지금 가장 빠른 열차는 00:00" 시간 설정
-        val startTime: String = setTime("13:50:00");
-        binding.startTimeTextView.text = startTime
+        minTransferData?.let {
+
+            val pathSplit = it.path[0].split("|")
+
+            val schedule = pathSplit[3]
+
+            val startTime: String = setTime(schedule);
+            binding.startTimeTextView.text = startTime
+        }
 
 //      //////////////////////////////////////////////////////////////////////
 
@@ -317,8 +365,15 @@ class MinimumTransferFragment : Fragment() {
         }
 
         // 📌 "도착 예정 시간은 00:00" 시간 설정
-        val endTime: String = setTime("14:00:00")
-        binding.endTimeTextView.text = endTime
+        minTransferData?.let {
+
+            val pathSplit = it.path[it.path.size - 1].split("|")
+
+            val schedule = pathSplit[3]
+
+            val endTime: String = setTime(schedule);
+            binding.endTimeTextView.text = endTime
+        }
     }
 
     // "지금 가장 빠른 열차는 00:00" & "도착 예정 시간은 00:00"에서 시간 구현하는 메서드
@@ -348,5 +403,42 @@ class MinimumTransferFragment : Fragment() {
     override fun onDetach() {
         super.onDetach()
         callback = null
+    }
+
+    private fun sendLocationDataToServer(from: Int, via: Int, to: Int, settingTime: String) {
+        // 서버에 전송할 데이터 객체 생성
+        val locationData = LocationData(from, via, to, settingTime)
+
+        val context = context
+        // Retrofit을 통해 서버로 데이터 전송
+        RetrofitClient.apiService.sendLocationData(locationData).enqueue(object :
+            Callback<ResultWrapper> {
+            override fun onResponse(call: Call<ResultWrapper>, response: Response<ResultWrapper>) {
+                if (response.isSuccessful) {
+                    // 서버로 데이터 전송 후 연산 결과 가져오기 ResultWrapper
+                    Log.e("MainActivity", "get ResultWrapper From Server!! : ${response.body()}")
+                    val resultWrapper = response.body()
+                    resultWrapper?.let {
+                        // 결과 처리 : RouteChechActivity 로 전달
+                        // 🎈인텐트 구현🎈
+                        val intent = Intent(context, RouteCheckActivity::class.java).apply {
+                            putExtra("minTransferResult", it.minTransferResult)
+                            putExtra("minTimeResult", it.minTimeResult)
+                            putExtra("from", from)
+                            putExtra("via", via)
+                            putExtra("to", to)
+                        }
+                        startActivity(intent)
+                        Log.e("MainActivity", "start RouteCheckActivity!!")
+                    }
+                } else {
+                    Toast.makeText(context, "서버로 경로 데이터 전송 실패", Toast.LENGTH_SHORT).show()
+                }
+            }
+            override fun onFailure(call: Call<ResultWrapper>, t: Throwable) {
+                Toast.makeText(context, "네트워크 오류 발생", Toast.LENGTH_SHORT).show()
+                Log.e("MainActivity", "Request failed: ${t.message}")
+            }
+        })
     }
 }
