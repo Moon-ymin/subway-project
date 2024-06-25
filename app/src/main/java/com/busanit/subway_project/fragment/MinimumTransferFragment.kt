@@ -405,7 +405,7 @@ class MinimumTransferFragment : Fragment() {
         callback = null
     }
 
-    public fun sendLocationDataToServer(from: Int, via: Int, to: Int, settingTime: String) {
+    private fun sendLocationDataToServer(from: Int, via: Int, to: Int, settingTime: String) {
         // 서버에 전송할 데이터 객체 생성
         val locationData = LocationData(from, via, to, settingTime)
 

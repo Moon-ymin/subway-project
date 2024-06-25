@@ -31,7 +31,6 @@ import com.busanit.subway_project.retrofit.ApiService
 import com.busanit.subway_project.retrofit.RetrofitClient
 import com.github.angads25.toggle.widget.LabeledSwitch
 import com.github.chrisbanes.photoview.PhotoView
-import okhttp3.ResponseBody
 import retrofit2.Callback
 import retrofit2.Call
 import retrofit2.Response
@@ -54,11 +53,6 @@ class MainActivity : AppCompatActivity() {
     private lateinit var dbHelper: DBHelper
     private lateinit var locabutton: Button
     private lateinit var apiService: ApiService // Retrofit 인터페이스를 사용할 변수
-
-//    // 출발, 경유, 도착 (scode) 설정
-//    private var from = 0
-//    private var via = 0
-//    private var to = 0
 
     @RequiresApi(Build.VERSION_CODES.O)
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -116,7 +110,6 @@ class MainActivity : AppCompatActivity() {
                 handleImageClick(absoluteX, absoluteY)
             }
         }
-
     }
 
     // 상단바 설정
@@ -311,7 +304,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     // 출발, 경유, 도착 정보를 서버에 전송하는 메서드
-    public fun sendLocationDataToServer(from: Int, via: Int, to: Int, settingTime: String) {
+    private fun sendLocationDataToServer(from: Int, via: Int, to: Int, settingTime: String) {
         // 서버에 전송할 데이터 객체 생성
         val locationData = LocationData(from, via, to, settingTime)
 
