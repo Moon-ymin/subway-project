@@ -10,6 +10,7 @@ import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Build
 import android.os.Bundle
+import android.util.Log
 import android.view.Menu
 import android.widget.Button
 import android.widget.Toast
@@ -23,8 +24,15 @@ import com.busanit.subway_project.adapter.RoutePagerAdapter
 import com.busanit.subway_project.alarm.AlarmReceiver
 import com.busanit.subway_project.alarm.TimerCallback
 import com.busanit.subway_project.databinding.ActivityRouteCheckBinding
+import com.busanit.subway_project.model.LocationData
+import com.busanit.subway_project.model.ResultWrapper
+import com.busanit.subway_project.model.SubwayResult
+import com.busanit.subway_project.retrofit.RetrofitClient
 import com.google.android.material.tabs.TabLayout
 import com.google.android.material.tabs.TabLayoutMediator
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
 
 class RouteCheckActivity : AppCompatActivity(), TimerCallback {
 
@@ -47,11 +55,15 @@ class RouteCheckActivity : AppCompatActivity(), TimerCallback {
 
         setContentView(binding.root)
 
+        // 메인 화면에서 넘어온 데이터 가져오기!
+        val minTransferData: SubwayResult? = intent.getParcelableExtra("minTransferResult")
+        val minTimeData: SubwayResult? = intent.getParcelableExtra("minTimeResult")
+
         val tabLayout = findViewById<TabLayout>(R.id.tabLayout)
         val viewPager = findViewById<ViewPager2>(R.id.viewPager)
         val backToMainButton = findViewById<Button>(R.id.backToMainButton)
 
-        val adapter = RoutePagerAdapter.RoutePagerAdapter(this)
+        val adapter = RoutePagerAdapter.RoutePagerAdapter(this, minTimeData, minTransferData, from, via, to)
         viewPager.adapter = adapter
 
         // 최단시간 | 최소환승 탭 구현
@@ -85,13 +97,6 @@ class RouteCheckActivity : AppCompatActivity(), TimerCallback {
         // 알림 구현 채널
         createNotificationChannel()
         requestPermissionsIfNecessary()
-
-        // 프래그먼트 추가
-//        if (savedInstanceState == null) {
-//            supportFragmentManager.beginTransaction()
-//                .replace(R.id.minimum_fragment, MinimumTransferFragment())
-//                .commit()
-//        }
     }
 
     // 상단바 구현
@@ -132,7 +137,7 @@ class RouteCheckActivity : AppCompatActivity(), TimerCallback {
 
         // 상단바 알림
         val notification = NotificationCompat.Builder(this, CHANNEL_ID)
-            .setSmallIcon(R.drawable.train)
+            .setSmallIcon(R.drawable.bsp_app_icon_round)
             .setContentTitle("타이머 종료")
             .setContentText("역에 도착했습니다!")
             .setPriority(NotificationCompat.PRIORITY_HIGH)

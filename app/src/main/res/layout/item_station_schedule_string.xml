@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal"
+    android:padding="8dp">
+
+    <ImageView
+        android:id="@+id/imageViewWaking"
+        android:layout_width="21dp"
+        android:layout_height="21dp"
+        android:layout_gravity="center"
+        android:gravity="center"
+        android:background="@drawable/walking_person"
+        />
+
+    <TextView
+        android:id="@+id/textViewNotice"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:text="Walking"
+        android:textAppearance="?attr/textAppearanceListItem"
+        android:paddingStart="8dp"
+        android:textColor="#000080"
+        android:fontFamily="@font/pretendardmedium"/>
+
+</LinearLayout>

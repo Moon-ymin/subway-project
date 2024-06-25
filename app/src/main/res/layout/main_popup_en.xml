@@ -7,37 +7,43 @@
 
     <androidx.appcompat.widget.AppCompatButton
         android:id="@+id/station"
-        android:layout_width="50dp"
-        android:layout_height="50dp"
+        android:layout_width="70dp"
+        android:layout_height="70dp"
         android:background="@drawable/circle_button_sky"
         android:text="station"
-        android:textSize="10sp"
+        android:textSize="15sp"
         android:layout_marginTop="3sp"
         android:layout_marginBottom="3sp"
-        android:layout_marginRight="5sp"/>
+        android:layout_marginRight="5sp"
+        android:fontFamily="@font/pretendardmedium"/>
+
     <androidx.appcompat.widget.AppCompatButton
         android:id="@+id/menu1"
-        android:layout_width="50dp"
-        android:layout_height="50dp"
+        android:layout_width="70dp"
+        android:layout_height="70dp"
         android:background="@drawable/circle_button_white"
         android:text="from"
-        android:textSize="10sp"
-        android:layout_margin="3sp"/>
+        android:textSize="15sp"
+        android:layout_margin="3sp"
+        android:fontFamily="@font/pretendardmedium"/>
+
     <androidx.appcompat.widget.AppCompatButton
         android:id="@+id/menu2"
-        android:layout_width="50dp"
-        android:layout_height="50dp"
+        android:layout_width="70dp"
+        android:layout_height="70dp"
         android:background="@drawable/circle_button_white"
         android:text="via"
-        android:textSize="10sp"
+        android:textSize="15sp"
         android:layout_margin="3sp"/>
+
     <androidx.appcompat.widget.AppCompatButton
         android:id="@+id/menu3"
-        android:layout_width="50dp"
-        android:layout_height="50dp"
+        android:layout_width="70dp"
+        android:layout_height="70dp"
         android:background="@drawable/circle_button_white"
         android:text="to"
-        android:textSize="10sp"
-        android:layout_margin="3sp"/>
+        android:textSize="15sp"
+        android:layout_margin="3sp"
+        android:fontFamily="@font/pretendardmedium"/>
 
 </LinearLayout>
