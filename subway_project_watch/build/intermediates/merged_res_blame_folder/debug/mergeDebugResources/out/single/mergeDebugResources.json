@@ -1,0 +1,34 @@
+[
+    {
+        "merged": "com.busanit.subway_project_watch-debug-84:/mipmap-mdpi_ic_launcher.webp.flat",
+        "source": "com.busanit.subway_project_watch-main-86:/mipmap-mdpi/ic_launcher.webp"
+    },
+    {
+        "merged": "com.busanit.subway_project_watch-debug-84:/mipmap-hdpi_ic_launcher.webp.flat",
+        "source": "com.busanit.subway_project_watch-main-86:/mipmap-hdpi/ic_launcher.webp"
+    },
+    {
+        "merged": "com.busanit.subway_project_watch-debug-84:/drawable-round_tile_preview.png.flat",
+        "source": "com.busanit.subway_project_watch-main-86:/drawable-round/tile_preview.png"
+    },
+    {
+        "merged": "com.busanit.subway_project_watch-debug-84:/mipmap-xxxhdpi_ic_launcher.webp.flat",
+        "source": "com.busanit.subway_project_watch-main-86:/mipmap-xxxhdpi/ic_launcher.webp"
+    },
+    {
+        "merged": "com.busanit.subway_project_watch-debug-84:/drawable_splash_icon.xml.flat",
+        "source": "com.busanit.subway_project_watch-main-86:/drawable/splash_icon.xml"
+    },
+    {
+        "merged": "com.busanit.subway_project_watch-debug-84:/mipmap-xhdpi_ic_launcher.webp.flat",
+        "source": "com.busanit.subway_project_watch-main-86:/mipmap-xhdpi/ic_launcher.webp"
+    },
+    {
+        "merged": "com.busanit.subway_project_watch-debug-84:/mipmap-xxhdpi_ic_launcher.webp.flat",
+        "source": "com.busanit.subway_project_watch-main-86:/mipmap-xxhdpi/ic_launcher.webp"
+    },
+    {
+        "merged": "com.busanit.subway_project_watch-debug-84:/drawable_tile_preview.png.flat",
+        "source": "com.busanit.subway_project_watch-main-86:/drawable/tile_preview.png"
+    }
+]

@@ -1,0 +1,19 @@
+{
+    "logs": [
+        {
+            "outputFile": "com.busanit.subway_project_watch-mergeDebugResources-82:/values-land/values-land.xml",
+            "map": [
+                {
+                    "source": "C:\\Users\\admin\\.gradle\\caches\\transforms-4\\c216d3ccdebce03e149b8d322ee99b82\\transformed\\appcompat-1.6.1\\res\\values-land\\values-land.xml",
+                    "from": {
+                        "startLines": "2,3,4",
+                        "startColumns": "4,4,4",
+                        "startOffsets": "55,125,196",
+                        "endColumns": "69,70,67",
+                        "endOffsets": "120,191,259"
+                    }
+                }
+            ]
+        }
+    ]
+}
