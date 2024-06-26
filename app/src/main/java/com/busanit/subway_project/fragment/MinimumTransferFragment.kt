@@ -14,7 +14,6 @@ import android.widget.Toast
 import androidx.annotation.RequiresApi
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.busanit.subway_project.MainActivity
 import com.busanit.subway_project.R
 import com.busanit.subway_project.RouteCheckActivity
 import com.busanit.subway_project.adapter.StationScheduleAdapter
@@ -28,8 +27,6 @@ import com.busanit.subway_project.model.StationSchedule
 import com.busanit.subway_project.model.SubwayResult
 import com.busanit.subway_project.retrofit.ApiService
 import com.busanit.subway_project.retrofit.RetrofitClient
-import com.google.android.gms.wearable.PutDataMapRequest
-import com.google.android.gms.wearable.Wearable
 import okhttp3.ResponseBody
 import retrofit2.Call
 import retrofit2.Callback
@@ -246,7 +243,42 @@ class MinimumTransferFragment : Fragment() {
                     val previous = stationList.last() // 마지막 요소를 가져옴
 
                     if (previous is StationSchedule.Schedule && previous.sname == sname) {
-                        stationList.add(StationSchedule.Walking("도보"))
+
+                        // 도보 시간 맵
+                        val walkingTime = mapOf(
+                            119 to "2",
+                            219 to "2",
+                            123 to "2",
+                            305 to "2",
+                            124 to "7",
+                            804 to "7",
+                            125 to "6",
+                            402 to "6",
+                            205 to "11",
+                            810 to "11",
+                            208 to "1",
+                            301 to "1",
+                            227 to "7",
+                            901 to "7",
+                            233 to "2",
+                            313 to "2",
+                            306 to "8",
+                            803 to "8",
+                            309 to "1",
+                            401 to "1",
+                            317 to "3",
+                            907 to "3"
+                        )
+
+                        // 이전 역의 scode와 Key 값이 같을 경우 "도보" 및 도보 시간 추가
+                        for (wt in walkingTime) {
+                            if (previous.scode == wt.key) {
+
+                                val totalWalkingTime = wt.value
+
+                                stationList.add(StationSchedule.Walking("도보(약 ${totalWalkingTime}분)"))
+                            }
+                        }
                     }
                 }
 
