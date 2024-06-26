@@ -27,6 +27,8 @@ import com.busanit.subway_project.model.ResultWrapper
 import com.busanit.subway_project.model.StationSchedule
 import com.busanit.subway_project.model.SubwayResult
 import com.busanit.subway_project.retrofit.RetrofitClient
+import com.google.android.gms.wearable.PutDataMapRequest
+import com.google.android.gms.wearable.Wearable
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -172,6 +174,8 @@ class MinimumTransferFragment : Fragment() {
 
                     // 버튼의 텍스트("타이머 설정")를 남은 시간으로 업데이트
                     binding.setTimer.text = String.format("%02d : %02d : %02d", hoursRemaining, minutesRemaining, secondsRemaining)
+
+                    sendTimerUpdateToWearOS(millisUntilFinished)
                 }
 
                 // 타이머 종료 후
@@ -390,6 +394,16 @@ class MinimumTransferFragment : Fragment() {
         return timeText
     }
 
+    // 워치로 타이머 데이터 전달하는 메서드
+    private fun sendTimerUpdateToWearOS(timeRemaining: Long) {
+
+        val putDataMapRequest = PutDataMapRequest.create("/timer")
+        putDataMapRequest.dataMap.putLong("timeRemaining", timeRemaining)
+
+        val putDataRequest = putDataMapRequest.asPutDataRequest()
+        Wearable.getDataClient(requireContext()).putDataItem(putDataRequest)
+    }
+
     // 알림 및 알람 관련 메서드
     override fun onAttach(context: Context) {
         super.onAttach(context)
@@ -409,6 +423,7 @@ class MinimumTransferFragment : Fragment() {
         // 서버에 전송할 데이터 객체 생성
         val locationData = LocationData(from, via, to, settingTime)
 
+        // Fragment 컨텍스트 생성
         val context = context
         // Retrofit을 통해 서버로 데이터 전송
         RetrofitClient.apiService.sendLocationData(locationData).enqueue(object :
@@ -419,8 +434,7 @@ class MinimumTransferFragment : Fragment() {
                     Log.e("MainActivity", "get ResultWrapper From Server!! : ${response.body()}")
                     val resultWrapper = response.body()
                     resultWrapper?.let {
-                        // 결과 처리 : RouteChechActivity 로 전달
-                        // 🎈인텐트 구현🎈
+
                         val intent = Intent(context, RouteCheckActivity::class.java).apply {
                             putExtra("minTransferResult", it.minTransferResult)
                             putExtra("minTimeResult", it.minTimeResult)

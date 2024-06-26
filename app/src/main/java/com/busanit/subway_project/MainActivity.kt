@@ -71,7 +71,7 @@ class MainActivity : AppCompatActivity() {
 
         // Retrofit
         val retrofit = Retrofit.Builder()
-            .baseUrl("http://192.168.0.251:8080/")  // 절대 경로만 지정
+            .baseUrl("http://10.100.203.36:8080/")  // 절대 경로만 지정
             .addConverterFactory(GsonConverterFactory.create())
             .build()
         apiService = retrofit.create(ApiService::class.java)
