@@ -4,7 +4,7 @@
             "outputFile": "com.busanit.subway_project_watch-mergeDebugResources-89:/values-v23/values-v23.xml",
             "map": [
                 {
-                    "source": "/Users/moonyoungmin/.gradle/caches/transforms-4/0563ab9c3a7735f518642d4d166fb81f/transformed/appcompat-1.7.0/res/values-v23/values-v23.xml",
+                    "source": "C:\\Users\\admin\\.gradle\\caches\\transforms-4\\0563ab9c3a7735f518642d4d166fb81f\\transformed\\appcompat-1.7.0\\res\\values-v23\\values-v23.xml",
                     "from": {
                         "startLines": "2,3,4,5,6,20,34,35,36,39,43,44,45,46",
                         "startColumns": "4,4,4,4,4,4,4,4,4,4,4,4,4,4",
@@ -15,7 +15,7 @@
                     }
                 },
                 {
-                    "source": "/Users/moonyoungmin/.gradle/caches/transforms-4/d3d9495b7248b21fcfa4097eed6bda2b/transformed/cardview-1.0.0/res/values-v23/values-v23.xml",
+                    "source": "C:\\Users\\admin\\.gradle\\caches\\transforms-4\\d3d9495b7248b21fcfa4097eed6bda2b\\transformed\\cardview-1.0.0\\res\\values-v23\\values-v23.xml",
                     "from": {
                         "startLines": "2",
                         "startColumns": "4",
@@ -34,7 +34,7 @@
                     }
                 },
                 {
-                    "source": "/Users/moonyoungmin/.gradle/caches/transforms-4/f5b3e9fd83931e2460a3fa94bb08c967/transformed/material-1.12.0/res/values-v23/values-v23.xml",
+                    "source": "C:\\Users\\admin\\.gradle\\caches\\transforms-4\\f5b3e9fd83931e2460a3fa94bb08c967\\transformed\\material-1.12.0\\res\\values-v23\\values-v23.xml",
                     "from": {
                         "startLines": "2,5,9,13,16,19,22,25,28,32",
                         "startColumns": "4,4,4,4,4,4,4,4,4,4",

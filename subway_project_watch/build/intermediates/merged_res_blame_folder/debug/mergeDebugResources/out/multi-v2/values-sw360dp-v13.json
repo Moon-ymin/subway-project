@@ -4,7 +4,7 @@
             "outputFile": "com.busanit.subway_project_watch-mergeDebugResources-89:/values-sw360dp-v13/values-sw360dp-v13.xml",
             "map": [
                 {
-                    "source": "/Users/moonyoungmin/.gradle/caches/transforms-4/ef01c433b1d1284b6808d4dca8170019/transformed/preference-1.1.0/res/values-sw360dp-v13/values-sw360dp-v13.xml",
+                    "source": "C:\\Users\\admin\\.gradle\\caches\\transforms-4\\ef01c433b1d1284b6808d4dca8170019\\transformed\\preference-1.1.0\\res\\values-sw360dp-v13\\values-sw360dp-v13.xml",
                     "from": {
                         "startLines": "2",
                         "startColumns": "4",

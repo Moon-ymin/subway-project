@@ -1,46 +1,42 @@
 [
     {
-        "merged": "/Users/moonyoungmin/.gradle/daemon/8.6/com.busanit.subway_project_watch-debug-91:/mipmap-xxxhdpi_ic_launcher.webp.flat",
-        "source": "/Users/moonyoungmin/.gradle/daemon/8.6/com.busanit.subway_project_watch-main-93:/mipmap-xxxhdpi/ic_launcher.webp"
+        "merged": "com.busanit.subway_project_watch-debug-91:/mipmap-mdpi_ic_launcher.webp.flat",
+        "source": "com.busanit.subway_project_watch-main-93:/mipmap-mdpi/ic_launcher.webp"
     },
     {
-        "merged": "/Users/moonyoungmin/.gradle/daemon/8.6/com.busanit.subway_project_watch-debug-91:/mipmap-xxhdpi_ic_launcher.webp.flat",
-        "source": "/Users/moonyoungmin/.gradle/daemon/8.6/com.busanit.subway_project_watch-main-93:/mipmap-xxhdpi/ic_launcher.webp"
+        "merged": "com.busanit.subway_project_watch-debug-91:/drawable-round_tile_preview.png.flat",
+        "source": "com.busanit.subway_project_watch-main-93:/drawable-round/tile_preview.png"
     },
     {
-        "merged": "/Users/moonyoungmin/.gradle/daemon/8.6/com.busanit.subway_project_watch-debug-91:/drawable-round_tile_preview.png.flat",
-        "source": "/Users/moonyoungmin/.gradle/daemon/8.6/com.busanit.subway_project_watch-main-93:/drawable-round/tile_preview.png"
-    },
-    {
-        "merged": "/Users/moonyoungmin/.gradle/daemon/8.6/com.busanit.subway_project_watch-debug-91:/mipmap-hdpi_ic_launcher.webp.flat",
-        "source": "/Users/moonyoungmin/.gradle/daemon/8.6/com.busanit.subway_project_watch-main-93:/mipmap-hdpi/ic_launcher.webp"
-    },
-    {
-        "merged": "/Users/moonyoungmin/.gradle/daemon/8.6/com.busanit.subway_project_watch-debug-91:/drawable_splash_icon.xml.flat",
-        "source": "/Users/moonyoungmin/.gradle/daemon/8.6/com.busanit.subway_project_watch-main-93:/drawable/splash_icon.xml"
-    },
-    {
-        "merged": "/Users/moonyoungmin/.gradle/daemon/8.6/com.busanit.subway_project_watch-debug-91:/mipmap-xhdpi_ic_launcher.webp.flat",
-        "source": "/Users/moonyoungmin/.gradle/daemon/8.6/com.busanit.subway_project_watch-main-93:/mipmap-xhdpi/ic_launcher.webp"
+        "merged": "com.busanit.subway_project_watch-debug-91:/mipmap-hdpi_ic_launcher.webp.flat",
+        "source": "com.busanit.subway_project_watch-main-93:/mipmap-hdpi/ic_launcher.webp"
     },
     {
         "merged": "com.busanit.subway_project_watch-debug-91:/layout_activity_timer.xml.flat",
         "source": "com.busanit.subway_project_watch-main-93:/layout/activity_timer.xml"
     },
     {
-        "merged": "/Users/moonyoungmin/.gradle/daemon/8.6/com.busanit.subway_project_watch-debug-91:/layout_activity_timer.xml.flat",
-        "source": "/Users/moonyoungmin/.gradle/daemon/8.6/com.busanit.subway_project_watch-main-93:/layout/activity_timer.xml"
+        "merged": "com.busanit.subway_project_watch-debug-91:/drawable_splash_icon.xml.flat",
+        "source": "com.busanit.subway_project_watch-main-93:/drawable/splash_icon.xml"
     },
     {
-        "merged": "/Users/moonyoungmin/.gradle/daemon/8.6/com.busanit.subway_project_watch-debug-91:/mipmap-mdpi_ic_launcher.webp.flat",
-        "source": "/Users/moonyoungmin/.gradle/daemon/8.6/com.busanit.subway_project_watch-main-93:/mipmap-mdpi/ic_launcher.webp"
+        "merged": "com.busanit.subway_project_watch-debug-91:/mipmap-xxxhdpi_ic_launcher.webp.flat",
+        "source": "com.busanit.subway_project_watch-main-93:/mipmap-xxxhdpi/ic_launcher.webp"
     },
     {
-        "merged": "/Users/moonyoungmin/.gradle/daemon/8.6/com.busanit.subway_project_watch-debug-91:/drawable_tile_preview.png.flat",
-        "source": "/Users/moonyoungmin/.gradle/daemon/8.6/com.busanit.subway_project_watch-main-93:/drawable/tile_preview.png"
+        "merged": "com.busanit.subway_project_watch-debug-91:/mipmap-xhdpi_ic_launcher.webp.flat",
+        "source": "com.busanit.subway_project_watch-main-93:/mipmap-xhdpi/ic_launcher.webp"
     },
     {
-        "merged": "/Users/moonyoungmin/.gradle/daemon/8.6/com.busanit.subway_project_watch-debug-91:/mipmap-hdpi_bsp_app_icon.png.flat",
-        "source": "/Users/moonyoungmin/.gradle/daemon/8.6/com.busanit.subway_project_watch-main-93:/mipmap-hdpi/bsp_app_icon.png"
+        "merged": "com.busanit.subway_project_watch-debug-91:/drawable_tile_preview.png.flat",
+        "source": "com.busanit.subway_project_watch-main-93:/drawable/tile_preview.png"
+    },
+    {
+        "merged": "com.busanit.subway_project_watch-debug-91:/mipmap-xxhdpi_ic_launcher.webp.flat",
+        "source": "com.busanit.subway_project_watch-main-93:/mipmap-xxhdpi/ic_launcher.webp"
+    },
+    {
+        "merged": "com.busanit.subway_project_watch-debug-91:/mipmap-hdpi_bsp_app_icon.png.flat",
+        "source": "com.busanit.subway_project_watch-main-93:/mipmap-hdpi/bsp_app_icon.png"
     }
 ]
