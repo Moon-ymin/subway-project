@@ -16,7 +16,7 @@ class SplashActivity : AppCompatActivity() {
         Handler(Looper.getMainLooper()).postDelayed({
             val intent = Intent(this, MainActivity::class.java)
             startActivity(intent)
-            finish() // 스플래시 화면을 종료하여 뒤로가기 버튼을 눌렀을 때 스플래시 화면이 다시 나타나지 않도록 합니다.
-        }, 3000) // 3초 대기
+            finish() // 스플래시 화면을 종료하여 뒤로가기 버튼을 눌렀을 때 스플래시 화면이 다시 나타나지 않도록
+        }, 4000) // 3초 대기
     }
 }
