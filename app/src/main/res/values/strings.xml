@@ -5,4 +5,6 @@
     <string name="from">출발</string>
     <string name="via">경유</string>
     <string name="to">도착</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
 </resources>
