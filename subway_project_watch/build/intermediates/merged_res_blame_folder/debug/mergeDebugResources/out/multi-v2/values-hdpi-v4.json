@@ -1,10 +1,10 @@
 {
     "logs": [
         {
-            "outputFile": "com.busanit.subway_project_watch-mergeDebugResources-82:/values-hdpi-v4/values-hdpi-v4.xml",
+            "outputFile": "com.busanit.subway_project_watch-mergeDebugResources-89:/values-hdpi-v4/values-hdpi-v4.xml",
             "map": [
                 {
-                    "source": "C:\\Users\\admin\\.gradle\\caches\\transforms-4\\c216d3ccdebce03e149b8d322ee99b82\\transformed\\appcompat-1.6.1\\res\\values-hdpi-v4\\values-hdpi-v4.xml",
+                    "source": "/Users/moonyoungmin/.gradle/caches/transforms-4/0563ab9c3a7735f518642d4d166fb81f/transformed/appcompat-1.7.0/res/values-hdpi-v4/values-hdpi-v4.xml",
                     "from": {
                         "startLines": "2",
                         "startColumns": "4",

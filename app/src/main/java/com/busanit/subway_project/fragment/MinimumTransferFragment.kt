@@ -26,12 +26,16 @@ import com.busanit.subway_project.model.LocationData
 import com.busanit.subway_project.model.ResultWrapper
 import com.busanit.subway_project.model.StationSchedule
 import com.busanit.subway_project.model.SubwayResult
+import com.busanit.subway_project.retrofit.ApiService
 import com.busanit.subway_project.retrofit.RetrofitClient
 import com.google.android.gms.wearable.PutDataMapRequest
 import com.google.android.gms.wearable.Wearable
+import okhttp3.ResponseBody
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
+import retrofit2.Retrofit
+import retrofit2.converter.gson.GsonConverterFactory
 import java.time.LocalTime
 import java.time.format.DateTimeFormatter
 import java.util.Calendar
@@ -396,13 +400,35 @@ class MinimumTransferFragment : Fragment() {
 
     // 워치로 타이머 데이터 전달하는 메서드
     private fun sendTimerUpdateToWearOS(timeRemaining: Long) {
+        val watchURL = "http://10.0.2.2:8080/"
+        val retrofit = Retrofit.Builder()
+            .baseUrl(watchURL)
+            .addConverterFactory(GsonConverterFactory.create())
+            .build()
 
-        val putDataMapRequest = PutDataMapRequest.create("/timer")
-        putDataMapRequest.dataMap.putLong("timeRemaining", timeRemaining)
+        val service = retrofit.create(ApiService::class.java)
 
-        val putDataRequest = putDataMapRequest.asPutDataRequest()
-        Wearable.getDataClient(requireContext()).putDataItem(putDataRequest)
+        // 서버로 데이터 전송
+        val call = service.sendTimerUpdate(timeRemaining)
+        call.enqueue(object : Callback<ResponseBody> {
+            override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
+                if (response.isSuccessful) {
+                    // 요청 성공 처리
+                    Log.d("sendTimerUpdateToWearOS", "Success: Data sent to server")
+                } else {
+                    // 요청 실패 처리
+                    Log.e("sendTimerUpdateToWearOS", "Failed: ${response.code()}")
+                }
+            }
+
+            override fun onFailure(call: Call<ResponseBody>, t: Throwable) {
+                // 네트워크 오류 처리
+                Log.e("sendTimerUpdateToWearOS", "Error: ${t.message}")
+            }
+        })
     }
+
+
 
     // 알림 및 알람 관련 메서드
     override fun onAttach(context: Context) {
