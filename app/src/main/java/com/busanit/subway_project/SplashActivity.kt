@@ -25,6 +25,6 @@ class SplashActivity : AppCompatActivity() {
             val intent = Intent(this, MainActivity::class.java)
             startActivity(intent)
             finish() // 스플래시 화면을 종료하여 뒤로가기 버튼을 눌렀을 때 스플래시 화면이 다시 나타나지 않도록
-        }, 5000) // 3초 대기
+        }, 5000) // 5초 대기
     }
 }
