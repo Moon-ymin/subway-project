@@ -1,7 +1,7 @@
 # 🚉 Busan Subway Project
 ## 🔍 Overview
 ![image](https://github.com/Moon-ymin/programmers_before/assets/83321379/21c5a1e6-5d84-4501-8347-5b463533e3a2)
-- BSP (2024년 6월 11일 ~ 2024년 6월 26일)
+- BSP (2024년 6월 11일 ~ 2024년 6월 27일)
 - 부산 지하철 운행 정보 앱 제작
 #### 프로젝트 목표 및 목적
 - 지하철 노선도의 구현
@@ -9,8 +9,8 @@
 ## 팀원 소개
 |   Name   | 문영민 | 정에스더 |
 | :------: | ----- | ------ |
-| Profile  | ![image](https://github.com/Moon-ymin/subway-project/assets/83321379/0ba481db-106f-46ea-9fed-e6dd595ea1e5) |![image](https://github.com/Moon-ymin/subway-project/assets/83321379/4a5e7f8d-cdc2-4536-9342-d9f489b8eb20) |
-| Position | Android & Spring | Android & Spring |
+| Profile  | <img src="https://github.com/Moon-ymin/subway-project/assets/83321379/0ba481db-106f-46ea-9fed-e6dd595ea1e5" width="150px"> |<img src="https://github.com/Moon-ymin/subway-project/assets/83321379/4a5e7f8d-cdc2-4536-9342-d9f489b8eb20" width="150px"> |
+| Position | Front - 메인 화면 구현 <br> Back - 경로 알고리즘 | Front - 경로 확인 화면 구현 <br> Back - DB 설계   |
 | Git  | [@Moon-ymin](https://github.com/Moon-ymin) | [@EstherOVO](https://github.com/EstherOVO) |
 ## 📝 Description
 #### 상세 설명
@@ -28,7 +28,7 @@
   - 도착 시간까지의 타이머 제공
 ## 🎨 Design
 #### Prototyping in [Figma](https://www.figma.com/proto/UiQQpYoMqnA4P2OYw7OGic/Untitled?node-id=0-1&t=UJ6WzVOE1EuSFaat-1)
-![image](https://github.com/Moon-ymin/programmers_before/assets/83321379/f1ff2ff5-065b-4707-a501-dd52bd7c13d7)
+![image](https://github.com/Moon-ymin/subway-project/assets/83321379/734880b0-c365-4966-bf3d-f07a4fbc5311)
 #### 시스템 구성도
 ![image](https://github.com/Moon-ymin/programmers_before/assets/83321379/b34b2bee-9323-48ed-a3ad-27b478947c40)
 #### ERD
@@ -60,7 +60,7 @@ directory
 #### Server - BackEnd
 directory
 ```markdown
-📦 app
+📦 Spring
 ├─ src
 │  └─ main
 │     ├─ assets
@@ -91,4 +91,5 @@ directory
 ...
 ```
 ## 📒 License
+
 
